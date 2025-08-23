@@ -1,0 +1,947 @@
+<% content_for :title, "UI Components - Real Estate App" %>
+
+<div class="container">
+  <!-- Header -->
+  <div class="py-8 border-b border-gray-200 mb-8">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">UI Component Library</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        A comprehensive collection of reusable UI components built with Rails 8, Hotwire, and Stimulus for modern real estate applications.
+      </p>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="mb-8">
+    <nav class="nav-pills" data-controller="navigation" data-navigation-target="menu">
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a href="#buttons" class="nav-link active" data-navigation-target="tab" data-tab-id="buttons">Buttons</a>
+        </li>
+        <li class="nav-item">
+          <a href="#forms" class="nav-link" data-navigation-target="tab" data-tab-id="forms">Forms</a>
+        </li>
+        <li class="nav-item">
+          <a href="#cards" class="nav-link" data-navigation-target="tab" data-tab-id="cards">Cards</a>
+        </li>
+        <li class="nav-item">
+          <a href="#navigation" class="nav-link" data-navigation-target="tab" data-tab-id="navigation">Navigation</a>
+        </li>
+        <li class="nav-item">
+          <a href="#alerts" class="nav-link" data-navigation-target="tab" data-tab-id="alerts">Alerts & Modals</a>
+        </li>
+        <li class="nav-item">
+          <a href="#tables" class="nav-link" data-navigation-target="tab" data-tab-id="tables">Tables & Lists</a>
+        </li>
+        <li class="nav-item">
+          <a href="#loading" class="nav-link" data-navigation-target="tab" data-tab-id="loading">Loading States</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Content Sections -->
+  
+  <!-- Buttons Section -->
+  <div id="buttons" class="tab-pane active show mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Buttons</h2>
+    <div class="space-y-8">
+      
+      <!-- Basic Buttons -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Basic Buttons</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex flex-wrap gap-4">
+            <button class="btn btn-primary" data-controller="button">Primary</button>
+            <button class="btn btn-secondary" data-controller="button">Secondary</button>
+            <button class="btn btn-success" data-controller="button">Success</button>
+            <button class="btn btn-warning" data-controller="button">Warning</button>
+            <button class="btn btn-danger" data-controller="button">Danger</button>
+            <button class="btn btn-outline-primary" data-controller="button">Outline</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Button Sizes -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Button Sizes</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex flex-wrap items-center gap-4">
+            <button class="btn btn-primary btn-xs" data-controller="button">Extra Small</button>
+            <button class="btn btn-primary btn-sm" data-controller="button">Small</button>
+            <button class="btn btn-primary btn-base" data-controller="button">Base</button>
+            <button class="btn btn-primary btn-lg" data-controller="button">Large</button>
+            <button class="btn btn-primary btn-xl" data-controller="button">Extra Large</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Buttons -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Interactive Buttons</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex flex-wrap gap-4">
+            <button class="btn btn-primary" 
+                    data-controller="button" 
+                    data-action="click->button#ripple"
+                    data-button-loading-text-value="Loading...">
+              Ripple Effect
+            </button>
+            <button class="btn btn-secondary" 
+                    data-controller="button" 
+                    data-action="click->button#toggle"
+                    data-button-confirm-message-value="Are you sure?"
+                    class="btn-toggle">
+              Toggle Button
+            </button>
+            <button class="btn btn-warning" 
+                    data-controller="button" 
+                    data-action="click->button#showLoading">
+              Show Loading
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property-specific Buttons -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Property Status Buttons</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex flex-wrap gap-4">
+            <button class="btn btn-property-available" data-controller="button">Available</button>
+            <button class="btn btn-property-sold" data-controller="button">Sold</button>
+            <button class="btn btn-property-pending" data-controller="button">Pending</button>
+            <button class="btn btn-property-featured" data-controller="button">Featured</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Forms Section -->
+  <div id="forms" class="tab-pane mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Forms</h2>
+    <div class="space-y-8">
+      
+      <!-- Basic Inputs -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Input Fields</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <form data-controller="form" class="space-y-4 max-w-md">
+            <div class="form-group">
+              <label class="form-label required">Property Name</label>
+              <input type="text" class="form-input" placeholder="Enter property name" required>
+              <div class="form-help">This will be displayed as the main title</div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea class="form-input form-textarea" placeholder="Property description"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Property Type</label>
+              <select class="form-input form-select">
+                <option>Select type</option>
+                <option>House</option>
+                <option>Apartment</option>
+                <option>Condo</option>
+                <option>Townhouse</option>
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Property-specific Form -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Real Estate Form</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <form data-controller="form" class="space-y-6 max-w-2xl">
+            <div class="form-row">
+              <div class="form-group col-sm-6">
+                <label class="form-label">Price</label>
+                <div class="form-price">
+                  <input type="text" class="form-input price-input" placeholder="0" data-form-target="priceInput">
+                </div>
+              </div>
+              <div class="form-group col-sm-6">
+                <label class="form-label">Square Footage</label>
+                <input type="number" class="form-input" placeholder="1000">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group col-sm-4">
+                <label class="form-label">Bedrooms</label>
+                <div class="form-bedrooms">
+                  <input type="number" class="form-input" min="0" max="10" value="3">
+                  <span class="text-sm text-gray-600">beds</span>
+                </div>
+              </div>
+              <div class="form-group col-sm-4">
+                <label class="form-label">Bathrooms</label>
+                <div class="form-bathrooms">
+                  <input type="number" class="form-input" min="0" max="10" step="0.5" value="2">
+                  <span class="text-sm text-gray-600">baths</span>
+                </div>
+              </div>
+              <div class="form-group col-sm-4">
+                <label class="form-label">Garage</label>
+                <input type="number" class="form-input" min="0" max="5" value="2">
+              </div>
+            </div>
+
+            <!-- File Upload -->
+            <div class="form-group">
+              <label class="form-label">Property Images</label>
+              <div class="form-file-drop" data-form-target="fileInput">
+                <input type="file" multiple accept="image/*" data-max-size="5242880">
+                <div class="text-center">
+                  <p class="text-gray-600 mb-2">📸 Drop images here or click to browse</p>
+                  <p class="text-sm text-gray-500">PNG, JPG up to 5MB each</p>
+                </div>
+              </div>
+              <div class="mt-4" data-preview-for="property-images"></div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Form Controls -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Form Controls</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="space-y-4 max-w-md">
+            <!-- Checkboxes -->
+            <div class="form-checkbox-group">
+              <div class="form-checkbox">
+                <input type="checkbox" id="amenity1">
+                <label for="amenity1" class="form-checkbox-label">Swimming Pool</label>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="amenity2" checked>
+                <label for="amenity2" class="form-checkbox-label">Gym</label>
+              </div>
+              <div class="form-checkbox">
+                <input type="checkbox" id="amenity3">
+                <label for="amenity3" class="form-checkbox-label">Parking</label>
+              </div>
+            </div>
+
+            <!-- Radio buttons -->
+            <div class="form-radio-group">
+              <div class="form-radio">
+                <input type="radio" id="listing1" name="listing-type" value="sale">
+                <label for="listing1" class="form-radio-label">For Sale</label>
+              </div>
+              <div class="form-radio">
+                <input type="radio" id="listing2" name="listing-type" value="rent" checked>
+                <label for="listing2" class="form-radio-label">For Rent</label>
+              </div>
+            </div>
+
+            <!-- Switch -->
+            <div class="form-switch">
+              <input type="checkbox" id="featured">
+              <label for="featured" class="form-switch-label">Featured Property</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Cards Section -->
+  <div id="cards" class="tab-pane mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Cards</h2>
+    <div class="space-y-8">
+
+      <!-- Property Cards -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Property Cards</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Property Card 1 -->
+            <div class="card property-card" 
+                 data-controller="card" 
+                 data-card-property-id-value="1"
+                 data-card-share-url-value="/properties/1">
+              <div class="property-card-image">
+                <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&h=300&fit=crop" 
+                     alt="Beautiful House" class="card-img-top">
+                <div class="property-card-badge available">Available</div>
+              </div>
+              <div class="card-body">
+                <div class="property-card-price">$450,000</div>
+                <h3 class="card-title">Beautiful Family Home</h3>
+                <div class="property-card-address">
+                  123 Oak Street, Springfield, IL 62701
+                </div>
+                <div class="property-card-features">
+                  <div class="property-card-feature property-card-feature-bed">3</div>
+                  <div class="property-card-feature property-card-feature-bath">2</div>
+                  <div class="property-card-feature property-card-feature-area">1,800 sq ft</div>
+                  <div class="property-card-feature property-card-feature-garage">2</div>
+                </div>
+                <div class="property-card-actions">
+                  <button class="property-card-favorite" data-card-target="favorite" data-action="click->card#favorite">
+                    ♡
+                  </button>
+                  <button class="property-card-share" data-card-target="share" data-action="click->card#share">
+                    Share
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property Card 2 -->
+            <div class="card property-card" 
+                 data-controller="card" 
+                 data-card-property-id-value="2">
+              <div class="property-card-image">
+                <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop" 
+                     alt="Modern Apartment" class="card-img-top">
+                <div class="property-card-badge featured">Featured</div>
+              </div>
+              <div class="card-body">
+                <div class="property-card-price">$320,000</div>
+                <h3 class="card-title">Modern Downtown Apartment</h3>
+                <div class="property-card-address">
+                  456 Main Street, Chicago, IL 60601
+                </div>
+                <div class="property-card-features">
+                  <div class="property-card-feature property-card-feature-bed">2</div>
+                  <div class="property-card-feature property-card-feature-bath">1</div>
+                  <div class="property-card-feature property-card-feature-area">1,200 sq ft</div>
+                </div>
+                <div class="property-card-actions">
+                  <button class="property-card-favorite active" data-card-target="favorite" data-action="click->card#favorite">
+                    ♥
+                  </button>
+                  <button class="property-card-share" data-card-target="share" data-action="click->card#share">
+                    Share
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent Card -->
+            <div class="card agent-card">
+              <div class="card-body">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" 
+                     alt="John Smith" class="agent-card-avatar">
+                <div class="agent-card-name">John Smith</div>
+                <div class="agent-card-title">Senior Real Estate Agent</div>
+                
+                <div class="agent-card-stats">
+                  <div class="agent-card-stat">
+                    <span class="agent-card-stat-number">127</span>
+                    <span class="agent-card-stat-label">Sold</span>
+                  </div>
+                  <div class="agent-card-stat">
+                    <span class="agent-card-stat-number">4.9</span>
+                    <span class="agent-card-stat-label">Rating</span>
+                  </div>
+                  <div class="agent-card-stat">
+                    <span class="agent-card-stat-number">5</span>
+                    <span class="agent-card-stat-label">Years</span>
+                  </div>
+                </div>
+                
+                <div class="agent-card-contact">
+                  <button class="btn btn-primary btn-sm">Contact</button>
+                  <button class="btn btn-outline-primary btn-sm">View Profile</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Cards -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Info Cards</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card info-card">
+              <div class="card-body">
+                <h4 class="card-title">Market Update</h4>
+                <p class="card-text">The local real estate market has shown strong growth with a 12% increase in home values over the past year.</p>
+              </div>
+            </div>
+            
+            <div class="card info-card success">
+              <div class="card-body">
+                <h4 class="card-title">Success Story</h4>
+                <p class="card-text">Congratulations! Your property has been successfully listed and is now available for viewing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Navigation Section -->
+  <div id="navigation" class="tab-pane mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Navigation</h2>
+    <div class="space-y-8">
+
+      <!-- Navbar -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Navigation Bar</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <nav class="navbar" data-controller="navigation">
+            <div class="navbar-brand">
+              🏠 RealEstate
+            </div>
+            
+            <ul class="navbar-nav" data-navigation-target="menu">
+              <li class="nav-item">
+                <a href="#" class="nav-link active">Home</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">Properties</a>
+              </li>
+              <li class="nav-item dropdown" data-navigation-target="dropdown">
+                <a href="#" class="nav-link dropdown-toggle">Services</a>
+                <div class="dropdown-menu">
+                  <a href="#" class="dropdown-item">Buy</a>
+                  <a href="#" class="dropdown-item">Sell</a>
+                  <a href="#" class="dropdown-item">Rent</a>
+                  <div class="dropdown-divider"></div>
+                  <a href="#" class="dropdown-item">Mortgage</a>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">About</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">Contact</a>
+              </li>
+            </ul>
+            
+            <button class="navbar-toggle" data-navigation-target="toggle" data-action="click->navigation#toggleMobileNav">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Breadcrumb</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <nav aria-label="Breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="#">Home</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="#">Properties</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="#">Houses</a>
+              </li>
+              <li class="breadcrumb-item active">
+                Springfield Listings
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Tab Navigation</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div data-controller="navigation">
+            <ul class="nav-tabs">
+              <li class="nav-item">
+                <a href="#tab1" class="nav-link active" data-navigation-target="tab" data-tab-id="tab1">Overview</a>
+              </li>
+              <li class="nav-item">
+                <a href="#tab2" class="nav-link" data-navigation-target="tab" data-tab-id="tab2">Details</a>
+              </li>
+              <li class="nav-item">
+                <a href="#tab3" class="nav-link" data-navigation-target="tab" data-tab-id="tab3">Photos</a>
+              </li>
+              <li class="nav-item">
+                <a href="#tab4" class="nav-link" data-navigation-target="tab" data-tab-id="tab4">Map</a>
+              </li>
+            </ul>
+            
+            <div class="mt-4">
+              <div id="tab1" class="tab-pane active show">
+                <p>Property overview content goes here.</p>
+              </div>
+              <div id="tab2" class="tab-pane">
+                <p>Detailed property information goes here.</p>
+              </div>
+              <div id="tab3" class="tab-pane">
+                <p>Property photos gallery goes here.</p>
+              </div>
+              <div id="tab4" class="tab-pane">
+                <p>Interactive map goes here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pills -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Pills Navigation</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <ul class="nav-pills">
+            <li class="nav-item">
+              <a href="#" class="nav-link active">All Properties</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">For Sale</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">For Rent</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">New Listings</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Pagination</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+              </li>
+              <li class="page-item active">
+                <a class="page-link" href="#">1</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#">2</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#">3</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Alerts & Modals Section -->
+  <div id="alerts" class="tab-pane mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Alerts & Modals</h2>
+    <div class="space-y-8">
+
+      <!-- Badges -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Badges</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex flex-wrap gap-3">
+            <span class="badge badge-primary">New</span>
+            <span class="badge badge-success">Available</span>
+            <span class="badge badge-warning">Pending</span>
+            <span class="badge badge-danger">Sold</span>
+            <span class="badge badge-outline-primary">Featured</span>
+            <span class="badge property-status-badge property-status-featured">Premium</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Alerts</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg space-y-4">
+          <div class="alert alert-success alert-dismissible" data-controller="alert">
+            <div class="alert-with-icon">
+              <div class="alert-icon">✅</div>
+              <div>
+                <strong>Success!</strong> Your property listing has been published successfully.
+              </div>
+            </div>
+            <button class="alert-close" data-alert-target="close">×</button>
+          </div>
+          
+          <div class="alert alert-warning alert-dismissible" data-controller="alert">
+            <div class="alert-with-icon">
+              <div class="alert-icon">⚠️</div>
+              <div>
+                <strong>Warning!</strong> This property has been on the market for over 90 days.
+              </div>
+            </div>
+            <button class="alert-close" data-alert-target="close">×</button>
+          </div>
+          
+          <div class="alert alert-info alert-dismissible" data-controller="alert">
+            <div class="alert-with-icon">
+              <div class="alert-icon">ℹ️</div>
+              <div>
+                <strong>Info:</strong> New properties matching your criteria are available. 
+                <a href="#" class="alert-link">View now</a>
+              </div>
+            </div>
+            <button class="alert-close" data-alert-target="close">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Demo -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Modal</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <button class="btn btn-primary" data-action="click->modal#show" data-modal-target="example-modal">
+            Open Modal
+          </button>
+          
+          <div id="example-modal" class="modal" data-controller="modal" data-modal-target="modal">
+            <div class="modal-backdrop" data-modal-target="backdrop"></div>
+            <div class="modal-content" data-modal-target="content">
+              <div class="modal-header">
+                <h3 class="modal-title">Property Details</h3>
+                <button class="modal-close" data-modal-target="close">×</button>
+              </div>
+              <div class="modal-body">
+                <p>This is a sample modal for displaying property details, forms, or other content.</p>
+                <p>You can include any content here like property photos, detailed descriptions, or contact forms.</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" data-action="click->modal#hide">Cancel</button>
+                <button class="btn btn-primary">Contact Agent</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Demo -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Toast Notifications</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex gap-3">
+            <button class="btn btn-success btn-sm" onclick="showSuccess('Property saved successfully!')">
+              Success Toast
+            </button>
+            <button class="btn btn-warning btn-sm" onclick="showWarning('Price alert: Market conditions have changed')">
+              Warning Toast
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="showError('Failed to load property data')">
+              Error Toast
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="showInfo('New properties available in your area')">
+              Info Toast
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Tables & Lists Section -->
+  <div id="tables" class="tab-pane mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Tables & Lists</h2>
+    <div class="space-y-8">
+
+      <!-- Property Table -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Property Table</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="table-responsive">
+            <table class="table table-striped property-table" 
+                   data-controller="table" 
+                   data-table-search-columns-value='["property", "address", "agent"]'>
+              <thead>
+                <tr>
+                  <th class="sortable" data-table-target="sortable" data-column="image">Image</th>
+                  <th class="sortable" data-table-target="sortable" data-column="property">Property</th>
+                  <th class="sortable" data-table-target="sortable" data-column="price">Price</th>
+                  <th class="sortable" data-table-target="sortable" data-column="beds">Beds</th>
+                  <th class="sortable" data-table-target="sortable" data-column="baths">Baths</th>
+                  <th class="sortable" data-table-target="sortable" data-column="sqft">Sq Ft</th>
+                  <th class="sortable" data-table-target="sortable" data-column="status">Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-table-target="tbody">
+                <tr data-table-target="row" class="selectable">
+                  <td>
+                    <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=60&h=40&fit=crop" 
+                         alt="Property" class="property-image">
+                  </td>
+                  <td>
+                    <div>
+                      <div class="font-medium">Beautiful Family Home</div>
+                      <div class="text-sm text-gray-500">123 Oak Street, Springfield</div>
+                    </div>
+                  </td>
+                  <td class="property-price" data-sort-value="450000">$450,000</td>
+                  <td data-sort-value="3">3</td>
+                  <td data-sort-value="2">2.0</td>
+                  <td data-sort-value="1800">1,800</td>
+                  <td>
+                    <span class="property-status property-status-available">Available</span>
+                  </td>
+                  <td>
+                    <div class="table-actions">
+                      <button class="btn btn-sm btn-outline-primary">View</button>
+                      <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-table-target="row" class="selectable">
+                  <td>
+                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=60&h=40&fit=crop" 
+                         alt="Property" class="property-image">
+                  </td>
+                  <td>
+                    <div>
+                      <div class="font-medium">Modern Downtown Apartment</div>
+                      <div class="text-sm text-gray-500">456 Main Street, Chicago</div>
+                    </div>
+                  </td>
+                  <td class="property-price" data-sort-value="320000">$320,000</td>
+                  <td data-sort-value="2">2</td>
+                  <td data-sort-value="1">1.0</td>
+                  <td data-sort-value="1200">1,200</td>
+                  <td>
+                    <span class="property-status property-status-pending">Pending</span>
+                  </td>
+                  <td>
+                    <div class="table-actions">
+                      <button class="btn btn-sm btn-outline-primary">View</button>
+                      <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr data-table-target="row" class="selectable">
+                  <td>
+                    <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=60&h=40&fit=crop" 
+                         alt="Property" class="property-image">
+                  </td>
+                  <td>
+                    <div>
+                      <div class="font-medium">Luxury Condo</div>
+                      <div class="text-sm text-gray-500">789 Park Avenue, New York</div>
+                    </div>
+                  </td>
+                  <td class="property-price" data-sort-value="850000">$850,000</td>
+                  <td data-sort-value="3">3</td>
+                  <td data-sort-value="3">3.0</td>
+                  <td data-sort-value="2200">2,200</td>
+                  <td>
+                    <span class="property-status property-status-sold">Sold</span>
+                  </td>
+                  <td>
+                    <div class="table-actions">
+                      <button class="btn btn-sm btn-outline-primary">View</button>
+                      <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="flex justify-between items-center mt-4">
+            <div class="table-row-count text-sm text-gray-600"></div>
+            <div class="flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary" data-action="click->table#selectAll">Select All</button>
+              <button class="btn btn-sm btn-outline-secondary" data-action="click->table#deselectAll">Deselect All</button>
+              <button class="btn btn-sm btn-outline-secondary" data-action="click->table#exportCSV">Export CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property List -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Property List</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="list-group">
+            <div class="list-group-item property-list-item">
+              <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=80&h=60&fit=crop" 
+                   alt="Property" class="property-list-image">
+              <div class="property-list-content">
+                <div class="property-list-title">Beautiful Family Home</div>
+                <div class="property-list-details">3 beds • 2 baths • 1,800 sq ft</div>
+                <div class="property-list-price">$450,000</div>
+              </div>
+              <div class="property-list-actions">
+                <button class="btn btn-sm btn-outline-primary">View</button>
+                <button class="btn btn-sm btn-outline-secondary">♡</button>
+              </div>
+            </div>
+            
+            <div class="list-group-item property-list-item">
+              <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=80&h=60&fit=crop" 
+                   alt="Property" class="property-list-image">
+              <div class="property-list-content">
+                <div class="property-list-title">Modern Downtown Apartment</div>
+                <div class="property-list-details">2 beds • 1 bath • 1,200 sq ft</div>
+                <div class="property-list-price">$320,000</div>
+              </div>
+              <div class="property-list-actions">
+                <button class="btn btn-sm btn-outline-primary">View</button>
+                <button class="btn btn-sm btn-danger">♥</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Loading States Section -->
+  <div id="loading" class="tab-pane mb-12">
+    <h2 class="text-3xl font-semibold mb-6">Loading States</h2>
+    <div class="space-y-8">
+
+      <!-- Spinners -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Loading Spinners</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex items-center gap-6">
+            <div class="spinner"></div>
+            <div class="spinner spinner-lg"></div>
+            <div class="loading-spinner spinner-dots"></div>
+            <div class="loading-spinner spinner-pulse"></div>
+            <div class="loading-spinner spinner-bounce"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Buttons -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Loading Buttons</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="flex gap-3">
+            <button class="btn btn-primary btn-loading">Loading...</button>
+            <button class="btn btn-secondary btn-loading">Processing</button>
+            <button class="btn btn-success btn-loading">Saving</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skeleton Cards -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Skeleton Loading</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Property Card Skeleton -->
+            <div class="card card-skeleton">
+              <div class="skeleton-image card-skeleton-image"></div>
+              <div class="card-body">
+                <div class="skeleton-text card-skeleton-title"></div>
+                <div class="skeleton-text card-skeleton-subtitle short"></div>
+                <div class="card-skeleton-content">
+                  <div class="skeleton-text card-skeleton-line"></div>
+                  <div class="skeleton-text card-skeleton-line"></div>
+                  <div class="skeleton-text card-skeleton-line"></div>
+                </div>
+                <div class="card-skeleton-actions">
+                  <div class="skeleton-button card-skeleton-button"></div>
+                  <div class="skeleton-button card-skeleton-button"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Another skeleton card -->
+            <div class="card card-skeleton">
+              <div class="skeleton-image card-skeleton-image"></div>
+              <div class="card-body">
+                <div class="skeleton-text card-skeleton-title"></div>
+                <div class="skeleton-text card-skeleton-subtitle short"></div>
+                <div class="card-skeleton-content">
+                  <div class="skeleton-text card-skeleton-line"></div>
+                  <div class="skeleton-text card-skeleton-line"></div>
+                  <div class="skeleton-text card-skeleton-line"></div>
+                </div>
+                <div class="card-skeleton-actions">
+                  <div class="skeleton-button card-skeleton-button"></div>
+                  <div class="skeleton-button card-skeleton-button"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- One more skeleton card -->
+            <div class="card card-skeleton">
+              <div class="skeleton-image card-skeleton-image"></div>
+              <div class="card-body">
+                <div class="skeleton-text card-skeleton-title"></div>
+                <div class="skeleton-text card-skeleton-subtitle short"></div>
+                <div class="card-skeleton-content">
+                  <div class="skeleton-text card-skeleton-line"></div>
+                  <div class="skeleton-text card-skeleton-line"></div>
+                  <div class="skeleton-text card-skeleton-line"></div>
+                </div>
+                <div class="card-skeleton-actions">
+                  <div class="skeleton-button card-skeleton-button"></div>
+                  <div class="skeleton-button card-skeleton-button"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bars -->
+      <div class="component-group">
+        <h3 class="text-xl font-medium mb-4">Progress Indicators</h3>
+        <div class="component-demo p-6 bg-gray-50 rounded-lg space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Upload Progress</label>
+            <div class="progress">
+              <div class="progress-bar" style="width: 75%"></div>
+            </div>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium text-gray-700 mb-2 block">Processing</label>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 60%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container"></div>
+
+<script>
+// Initialize tab navigation on page load
+document.addEventListener('DOMContentLoaded', function() {
+  // Update row counts for tables
+  document.querySelectorAll('[data-controller="table"]').forEach(table => {
+    const controller = table.stimulusController || {};
+    if (controller.updateRowCount) {
+      controller.updateRowCount();
+    }
+  });
+});
+</script>

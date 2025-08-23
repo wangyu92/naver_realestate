@@ -1,10 +1,19 @@
 /*
  * This is a manifest file that'll be compiled into application.css.
  *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
+ * Component-based architecture for real estate app UI components.
+ * Files are loaded in order of specificity: variables → base → components.
  */
+
+/* Design system foundation */
+@import "components/variables";
+@import "components/base";
+
+/* UI Components */
+@import "components/buttons";
+@import "components/forms";
+@import "components/cards";
+@import "components/navigation";
+@import "components/badges"; /* includes modals and alerts */
+@import "components/tables"; /* includes lists */
+@import "components/loading";

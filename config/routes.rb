@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # Components showcase
+  get "components" => "components#index", as: :components
+  get "components/:component" => "components#preview", as: :component_preview
+
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "components#index"
 end
