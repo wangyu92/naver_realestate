@@ -8,9 +8,16 @@ export default class extends Controller {
   connect() {
     this.updateSelectedCount()
     this.updateSelectAllButton()
+    
+    // Initialize all checkbox styles based on their current checked state
+    this.checkboxTargets.forEach(checkbox => {
+      this.updateCheckboxStyle(checkbox)
+    })
   }
 
-  updateSelection() {
+  updateSelection(event) {
+    const checkbox = event.target
+    this.updateCheckboxStyle(checkbox)
     this.updateSelectedCount()
     this.updateSelectAllButton()
     this.dispatchSelectionChange()
@@ -62,8 +69,8 @@ export default class extends Controller {
 
   updateCheckboxStyle(checkbox) {
     const label = checkbox.closest('label')
-    const indicator = label.querySelector('div')
-    const svg = indicator.querySelector('svg')
+    const indicator = label.querySelector('.checkbox-indicator')
+    const checkmark = indicator.querySelector('.checkmark')
 
     if (checkbox.checked) {
       // Selected state
@@ -71,14 +78,20 @@ export default class extends Controller {
       label.classList.add('border-blue-500', 'bg-blue-50')
       indicator.classList.remove('border-gray-300')
       indicator.classList.add('bg-blue-500', 'border-blue-500')
-      if (svg) svg.style.display = 'block'
+      if (checkmark) {
+        checkmark.classList.remove('opacity-0')
+        checkmark.classList.add('opacity-100')
+      }
     } else {
       // Unselected state
       label.classList.remove('border-blue-500', 'bg-blue-50')
       label.classList.add('border-gray-200')
       indicator.classList.remove('bg-blue-500', 'border-blue-500')
       indicator.classList.add('border-gray-300')
-      if (svg) svg.style.display = 'none'
+      if (checkmark) {
+        checkmark.classList.remove('opacity-100')
+        checkmark.classList.add('opacity-0')
+      }
     }
   }
 

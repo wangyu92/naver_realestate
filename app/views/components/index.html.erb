@@ -226,13 +226,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <%= render 'components/range_slider',
-                label: '매매가',
+                label: '매매가 (만원)',
                 name: 'sale_price',
                 min: 0,
-                max: 1000000000,
-                step: 1000000,
-                value_min: 100000000,
-                value_max: 500000000,
+                max: 100000,
+                step: 100,
+                value_min: 10000,
+                value_max: 50000,
                 format: 'currency',
                 show_inputs: true %>
           </div>

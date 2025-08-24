@@ -11,8 +11,14 @@ export default class extends Controller {
   }
 
   connect() {
+    this.currentAreaUnit = 'sqm' // Default to square meters
     this.updateDisplay()
     this.updateActiveRange()
+    
+    // Listen for unit changes if this is an area slider
+    if (this.formatValue === 'area') {
+      document.addEventListener('unitChanged', this.handleUnitChange.bind(this))
+    }
   }
 
   // Update values when slider is moved
@@ -60,9 +66,11 @@ export default class extends Controller {
     // Handle different formats
     switch (this.formatValue) {
       case "currency":
-        return Math.round(numValue * 10000) // 만원 단위 -> 원
+        return Math.round(numValue) // Already in 만원 units
       case "area":
         return Math.round(numValue * 3.3058) // 평 -> ㎡ conversion if needed
+      case "ratio":
+        return Math.round(numValue * 10) / 10 // Keep one decimal place
       default:
         return Math.round(numValue)
     }
@@ -113,6 +121,8 @@ export default class extends Controller {
         return this.formatArea(value)
       case "year":
         return `${value}년`
+      case "ratio":
+        return this.formatRatio(value)
       default:
         return value.toLocaleString()
     }
@@ -122,32 +132,119 @@ export default class extends Controller {
   formatValue(value) {
     switch (this.formatValue) {
       case "currency":
-        return Math.round(value / 10000).toLocaleString() // 만원 단위
+        return value.toLocaleString() // Already in 만원 units
       case "area":
         return Math.round(value / 3.3058 * 10) / 10 // ㎡ -> 평
+      case "ratio":
+        return parseFloat(value).toFixed(1)
       default:
         return value.toString()
     }
   }
 
-  // Currency formatting
+  // Currency formatting (values are in 만원 units)
   formatCurrency(value) {
-    if (value >= 100000000) { // 1억 이상
-      const eok = Math.floor(value / 100000000)
-      const man = Math.round((value % 100000000) / 10000)
+    if (value >= 10000) { // 1억 이상 (10000만원)
+      const eok = Math.floor(value / 10000)
+      const man = value % 10000
       return man > 0 ? `${eok}억 ${man}만원` : `${eok}억원`
-    } else if (value >= 10000) { // 1만 이상
-      const man = Math.round(value / 10000)
-      return `${man}만원`
+    } else if (value >= 1) { // 1만 이상
+      return `${value}만원`
     } else {
-      return `${value.toLocaleString()}원`
+      return `${Math.round(value * 10000).toLocaleString()}원`
     }
   }
 
   // Area formatting
   formatArea(value) {
-    const pyeong = Math.round(value / 3.3058 * 10) / 10
-    return `${pyeong}평 (${value}㎡)`
+    if (this.currentAreaUnit === 'pyeong') {
+      const pyeong = Math.round(value / 3.3058 * 10) / 10
+      return `${pyeong}평`
+    } else {
+      return `${value}㎡`
+    }
+  }
+  
+  // Ratio formatting
+  formatRatio(value) {
+    const ratio = parseFloat(value)
+    if (ratio === 0) {
+      return "주차불가"
+    } else if (ratio >= 1) {
+      return `${ratio.toFixed(1)}대/세대`
+    } else {
+      const households = Math.round(1 / ratio)
+      return `${households}세대당 1대`
+    }
+  }
+  
+  // Handle unit change from toggle
+  handleUnitChange(event) {
+    const { unit, oldUnit } = event.detail
+    const oldAreaUnit = this.currentAreaUnit
+    this.currentAreaUnit = unit === 'pyeong' ? 'pyeong' : 'sqm'
+    
+    // Convert current slider values if needed
+    if (oldAreaUnit !== this.currentAreaUnit) {
+      this.convertSliderValues(oldAreaUnit, this.currentAreaUnit)
+    }
+    
+    this.updateDisplay()
+  }
+  
+  convertSliderValues(fromUnit, toUnit) {
+    const currentMin = parseInt(this.minSliderTarget.value)
+    const currentMax = parseInt(this.maxSliderTarget.value)
+    
+    let newMin, newMax
+    
+    if (fromUnit === 'sqm' && toUnit === 'pyeong') {
+      // Convert ㎡ to 평
+      newMin = Math.round(currentMin / 3.3058)
+      newMax = Math.round(currentMax / 3.3058)
+      
+      // Update slider ranges
+      this.minValue = Math.round(this.minValue / 3.3058)
+      this.maxValue = Math.round(this.maxValue / 3.3058)
+      this.stepValue = Math.max(1, Math.round(this.stepValue / 3.3058))
+      
+    } else if (fromUnit === 'pyeong' && toUnit === 'sqm') {
+      // Convert 평 to ㎡
+      newMin = Math.round(currentMin * 3.3058)
+      newMax = Math.round(currentMax * 3.3058)
+      
+      // Update slider ranges
+      this.minValue = Math.round(this.minValue * 3.3058)
+      this.maxValue = Math.round(this.maxValue * 3.3058)
+      this.stepValue = Math.max(1, Math.round(this.stepValue * 3.3058))
+    } else {
+      return // No conversion needed
+    }
+    
+    // Update slider attributes
+    this.minSliderTarget.min = this.minValue
+    this.minSliderTarget.max = this.maxValue  
+    this.minSliderTarget.step = this.stepValue
+    this.maxSliderTarget.min = this.minValue
+    this.maxSliderTarget.max = this.maxValue
+    this.maxSliderTarget.step = this.stepValue
+    
+    // Update slider values
+    this.minSliderTarget.value = Math.max(this.minValue, Math.min(newMin, this.maxValue))
+    this.maxSliderTarget.value = Math.max(this.minValue, Math.min(newMax, this.maxValue))
+    
+    this.updateActiveRange()
+  }
+  
+  // Method to be called externally for unit updates
+  updateAreaUnit(unit) {
+    const oldUnit = this.currentAreaUnit
+    this.currentAreaUnit = unit === 'pyeong' ? 'pyeong' : 'sqm'
+    
+    if (oldUnit !== this.currentAreaUnit) {
+      this.convertSliderValues(oldUnit, this.currentAreaUnit)
+      this.updateDisplay()
+    }
   }
 
   // Dispatch change event for parent components

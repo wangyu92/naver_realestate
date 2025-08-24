@@ -67,4 +67,17 @@ module ApplicationHelper
       "#{floor_string}층"
     end
   end
+  
+  # Helper method to safely extract range values from params
+  def safe_range_param(param_hash, key, default_value)
+    if param_hash.is_a?(Hash) && param_hash[key].present?
+      if default_value.is_a?(Float)
+        param_hash[key].to_f
+      else
+        param_hash[key].to_i
+      end
+    else
+      default_value
+    end
+  end
 end

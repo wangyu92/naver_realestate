@@ -62,13 +62,13 @@
               <!-- Sale Price -->
               <div class="mb-4" data-show-if="transaction_type" data-show-values="sale,">
                 <%= render 'components/range_slider',
-                    label: '매매가',
+                    label: '매매가 (만원)',
                     name: 'sale_price',
                     min: 0,
-                    max: 3000000000,
-                    step: 10000000,
-                    value_min: params.dig(:sale_price, :min)&.to_i || 0,
-                    value_max: params.dig(:sale_price, :max)&.to_i || 1000000000,
+                    max: 300000,
+                    step: 100,
+                    value_min: safe_range_param(params[:sale_price], :min, 0),
+                    value_max: safe_range_param(params[:sale_price], :max, 100000),
                     format: 'currency',
                     show_inputs: true %>
               </div>
@@ -76,13 +76,13 @@
               <!-- Jeonse Deposit -->
               <div class="mb-4" data-show-if="transaction_type" data-show-values="jeonse,">
                 <%= render 'components/range_slider',
-                    label: '보증금 (전세)',
+                    label: '보증금 (전세, 만원)',
                     name: 'jeonse_deposit',
                     min: 0,
-                    max: 2000000000,
-                    step: 10000000,
-                    value_min: params.dig(:jeonse_deposit, :min)&.to_i || 0,
-                    value_max: params.dig(:jeonse_deposit, :max)&.to_i || 500000000,
+                    max: 200000,
+                    step: 100,
+                    value_min: safe_range_param(params[:jeonse_deposit], :min, 0),
+                    value_max: safe_range_param(params[:jeonse_deposit], :max, 50000),
                     format: 'currency',
                     show_inputs: true %>
               </div>
@@ -90,13 +90,13 @@
               <!-- Monthly Rent -->
               <div class="mb-4" data-show-if="transaction_type" data-show-values="monthly,">
                 <%= render 'components/range_slider',
-                    label: '월세',
+                    label: '월세 (만원)',
                     name: 'monthly_rent',
                     min: 0,
-                    max: 5000000,
-                    step: 50000,
-                    value_min: params.dig(:monthly_rent, :min)&.to_i || 0,
-                    value_max: params.dig(:monthly_rent, :max)&.to_i || 2000000,
+                    max: 500,
+                    step: 5,
+                    value_min: safe_range_param(params[:monthly_rent], :min, 0),
+                    value_max: safe_range_param(params[:monthly_rent], :max, 200),
                     format: 'currency',
                     show_inputs: true %>
               </div>
@@ -121,8 +121,8 @@
                     min: 0,
                     max: 500,
                     step: 1,
-                    value_min: params.dig(:exclusive_area, :min)&.to_i || 0,
-                    value_max: params.dig(:exclusive_area, :max)&.to_i || 200,
+                    value_min: safe_range_param(params[:exclusive_area], :min, 0),
+                    value_max: safe_range_param(params[:exclusive_area], :max, 200),
                     format: 'area',
                     show_inputs: true %>
               </div>
@@ -135,8 +135,8 @@
                     min: 0,
                     max: 600,
                     step: 1,
-                    value_min: params.dig(:supply_area, :min)&.to_i || 0,
-                    value_max: params.dig(:supply_area, :max)&.to_i || 250,
+                    value_min: safe_range_param(params[:supply_area], :min, 0),
+                    value_max: safe_range_param(params[:supply_area], :max, 250),
                     format: 'area',
                     show_inputs: true %>
               </div>
@@ -147,20 +147,28 @@
           <div class="filter-section">
             <div class="space-y-4">
               <!-- Room Count -->
-              <%= render 'components/select_field',
+              <%= render 'components/range_slider',
                   label: '방 개수',
                   name: 'room_count',
-                  value: params[:room_count],
-                  placeholder: '전체',
-                  options: @filter_options[:room_counts] %>
+                  min: 1,
+                  max: 10,
+                  step: 1,
+                  value_min: safe_range_param(params[:room_count], :min, 1),
+                  value_max: safe_range_param(params[:room_count], :max, 5),
+                  format: 'number',
+                  show_inputs: false %>
               
               <!-- Bathroom Count -->
-              <%= render 'components/select_field',
-                  label: '욕실 개수', 
+              <%= render 'components/range_slider',
+                  label: '욕실 개수',
                   name: 'bathroom_count',
-                  value: params[:bathroom_count],
-                  placeholder: '전체',
-                  options: @filter_options[:bathroom_counts] %>
+                  min: 1,
+                  max: 5,
+                  step: 1,
+                  value_min: safe_range_param(params[:bathroom_count], :min, 1),
+                  value_max: safe_range_param(params[:bathroom_count], :max, 3),
+                  format: 'number',
+                  show_inputs: false %>
               
               <!-- Built Year -->
               <%= render 'components/range_slider',
@@ -169,8 +177,8 @@
                   min: 1990,
                   max: 2024,
                   step: 1,
-                  value_min: params.dig(:built_year, :min)&.to_i || 2000,
-                  value_max: params.dig(:built_year, :max)&.to_i || 2024,
+                  value_min: safe_range_param(params[:built_year], :min, 2000),
+                  value_max: safe_range_param(params[:built_year], :max, 2024),
                   format: 'year',
                   show_inputs: false %>
             </div>
@@ -187,12 +195,6 @@
                   style: 'list',
                   multiple: true %>
               
-              <!-- Floor -->
-              <%= render 'components/floor_selector',
-                  label: '층수',
-                  name: 'floor',
-                  value: params[:floor],
-                  placeholder: '예: 5/15, 10-12/20' %>
               
               <!-- Features -->
               <div class="space-y-3">
@@ -215,10 +217,10 @@
                   min: 0.0,
                   max: 2.0,
                   step: 0.1,
-                  value_min: params.dig(:parking_ratio, :min)&.to_f || 0.0,
-                  value_max: params.dig(:parking_ratio, :max)&.to_f || 2.0,
+                  value_min: safe_range_param(params[:parking_ratio], :min, 0.0),
+                  value_max: safe_range_param(params[:parking_ratio], :max, 2.0),
                   format: 'ratio',
-                  show_inputs: false %>
+                  show_inputs: true %>
             </div>
           </div>
           

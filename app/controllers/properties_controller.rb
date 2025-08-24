@@ -7,6 +7,16 @@ class PropertiesController < ApplicationController
   end
 
   private
+  
+  # Helper method to safely extract range values from params
+  def range_param(param_name, key, default_value)
+    param = params[param_name]
+    if param.is_a?(Hash) && param[key].present?
+      param[key].to_f
+    else
+      default_value
+    end
+  end
 
   def sample_properties
     [

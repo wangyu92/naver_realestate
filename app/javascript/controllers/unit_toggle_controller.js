@@ -51,7 +51,23 @@ export default class extends Controller {
     this.dispatch("unitChanged", {
       detail: {
         unit: this.currentValue,
-        conversionFactor: this.getConversionFactor()
+        conversionFactor: this.getConversionFactor(),
+        oldUnit: this.currentValue === 'pyeong' ? 'sqm' : 'pyeong'
+      }
+    })
+    
+    // Update all area range sliders
+    this.updateAreaSliders()
+  }
+  
+  updateAreaSliders() {
+    // Find all area range sliders and update their values and labels
+    const areaSliders = document.querySelectorAll('[data-controller*="range-slider"][data-range-slider-format-value="area"]')
+    
+    areaSliders.forEach(slider => {
+      const controller = this.application.getControllerForElementAndIdentifier(slider, 'range-slider')
+      if (controller) {
+        controller.updateAreaUnit(this.currentValue)
       }
     })
   }
