@@ -7,6 +7,8 @@ export default class extends Controller {
   connect() {
     this.setupConditionalFields()
     this.setupFilterInteractions()
+    this.restoreFiltersFromUrl()
+    this.setupAutoUrlUpdate()
   }
 
   // Handle form submission
@@ -217,5 +219,159 @@ export default class extends Controller {
     // Listen for filter changes
     form.addEventListener('change', autoSubmit)
     form.addEventListener('input', autoSubmit)
+  }
+
+  // Restore filter values from URL parameters
+  restoreFiltersFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const form = this.hasFormTarget ? this.formTarget : document.querySelector('form')
+    if (!form) return
+
+    // Restore single value fields
+    const singleValueFields = ['transaction_type', 'sort', 'area_unit', 'has_elevator', 'has_photos']
+    singleValueFields.forEach(fieldName => {
+      if (urlParams.has(fieldName)) {
+        const element = form.querySelector(`[name="${fieldName}"]`)
+        if (element) {
+          if (element.type === 'checkbox') {
+            element.checked = true
+          } else {
+            element.value = urlParams.get(fieldName)
+          }
+          element.dispatchEvent(new Event('change', { bubbles: true }))
+        }
+      }
+    })
+
+    // Restore array fields (checkboxes, multi-select)
+    const arrayFields = ['property_types', 'locations', 'direction']
+    arrayFields.forEach(fieldName => {
+      const values = urlParams.getAll(`${fieldName}[]`)
+      if (values.length > 0) {
+        const checkboxes = form.querySelectorAll(`input[name="${fieldName}[]"]`)
+        checkboxes.forEach(checkbox => {
+          if (values.includes(checkbox.value)) {
+            checkbox.checked = true
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+        })
+      }
+    })
+
+    // Restore range fields (sliders)
+    const rangeFields = [
+      'sale_price', 'jeonse_deposit', 'monthly_rent', 'maintenance_fee',
+      'exclusive_area', 'supply_area', 'room_count', 'bathroom_count',
+      'built_year', 'parking_ratio', 'floor', 'household_count'
+    ]
+    rangeFields.forEach(fieldName => {
+      const minValue = urlParams.get(`${fieldName}[min]`)
+      const maxValue = urlParams.get(`${fieldName}[max]`)
+      
+      if (minValue !== null || maxValue !== null) {
+        const minInput = form.querySelector(`input[name="${fieldName}[min]"]`)
+        const maxInput = form.querySelector(`input[name="${fieldName}[max]"]`)
+        
+        if (minInput && minValue !== null) {
+          minInput.value = minValue
+          minInput.dispatchEvent(new Event('input', { bubbles: true }))
+        }
+        
+        if (maxInput && maxValue !== null) {
+          maxInput.value = maxValue
+          maxInput.dispatchEvent(new Event('input', { bubbles: true }))
+        }
+
+        // Trigger range slider update if it exists
+        const rangeSlider = form.querySelector(`[data-controller*="range-slider"][data-name="${fieldName}"]`)
+        if (rangeSlider) {
+          const controller = this.application.getControllerForElementAndIdentifier(rangeSlider, 'range-slider')
+          if (controller && controller.updateFromInputs) {
+            controller.updateFromInputs()
+          }
+        }
+      }
+    })
+
+    // Trigger conditional field visibility update
+    this.setupConditionalFields()
+  }
+
+  // Setup automatic URL parameter updates
+  setupAutoUrlUpdate() {
+    const form = this.hasFormTarget ? this.formTarget : document.querySelector('form')
+    if (!form) return
+
+    // Listen for all form changes and update URL
+    const updateUrl = (event) => {
+      // Skip if it's a submit button
+      if (event.target.type === 'submit') return
+      
+      setTimeout(() => {
+        this.updateUrlFromForm()
+      }, 100) // Small delay to ensure all values are updated
+    }
+
+    form.addEventListener('change', updateUrl)
+    form.addEventListener('input', updateUrl)
+  }
+
+  // Update URL parameters based on current form state
+  updateUrlFromForm() {
+    const form = this.hasFormTarget ? this.formTarget : document.querySelector('form')
+    if (!form) return
+
+    const url = new URL(window.location)
+    const formData = new FormData(form)
+
+    // Clear existing filter parameters (but keep sort)
+    const keysToRemove = []
+    for (const [key] of url.searchParams.entries()) {
+      if (key !== 'sort') { // Keep sort parameter
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach(key => url.searchParams.delete(key))
+
+    // Add current form values
+    for (const [key, value] of formData.entries()) {
+      if (value && value.trim() !== '') {
+        // Handle range fields specially
+        if (key.includes('[') && key.includes(']')) {
+          url.searchParams.set(key, value)
+        } else if (form.querySelector(`input[name="${key}[]"]`)) {
+          // Handle array fields - collect all checked values
+          const checkedValues = Array.from(form.querySelectorAll(`input[name="${key}[]"]:checked`))
+                                     .map(input => input.value)
+          
+          // Remove existing entries for this field
+          url.searchParams.delete(key)
+          for (const [existingKey] of url.searchParams.entries()) {
+            if (existingKey.startsWith(`${key}[`)) {
+              url.searchParams.delete(existingKey)
+            }
+          }
+          
+          // Add new values
+          checkedValues.forEach(val => url.searchParams.append(`${key}[]`, val))
+        } else {
+          url.searchParams.set(key, value)
+        }
+      }
+    }
+
+    // Remove empty parameters
+    const paramsToRemove = []
+    for (const [key, value] of url.searchParams.entries()) {
+      if (!value || value.trim() === '') {
+        paramsToRemove.push(key)
+      }
+    }
+    paramsToRemove.forEach(key => url.searchParams.delete(key))
+
+    // Update URL without reloading page
+    if (url.toString() !== window.location.toString()) {
+      window.history.replaceState({}, '', url)
+    }
   }
 }

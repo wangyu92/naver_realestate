@@ -1,16 +1,209 @@
 class PropertiesController < ApplicationController
   def index
-    @properties = sample_properties
+    @filter_params = filter_params
+    @properties = filter_properties(sample_properties)
     @filter_options = build_filter_options
     @total_count = @properties.length
     @has_filters = has_filter_params?
+    @current_sort = params[:sort] || 'latest'
   end
 
   private
   
+  def filter_params
+    params.permit(
+      :transaction_type, :sort, :area_unit,
+      :has_elevator, :has_photos,
+      property_types: [],
+      locations: [],
+      direction: [],
+      sale_price: [:min, :max],
+      jeonse_deposit: [:min, :max],
+      monthly_rent: [:min, :max],
+      maintenance_fee: [:min, :max],
+      exclusive_area: [:min, :max],
+      supply_area: [:min, :max],
+      room_count: [:min, :max],
+      bathroom_count: [:min, :max],
+      built_year: [:min, :max],
+      parking_ratio: [:min, :max],
+      floor: [:min, :max],
+      household_count: [:min, :max]
+    )
+  end
+  
+  def filter_properties(properties)
+    filtered = properties.dup
+    
+    # Transaction type filter
+    if @filter_params[:transaction_type].present?
+      case @filter_params[:transaction_type]
+      when 'sale'
+        filtered = filtered.select { |p| p[:transaction_type] == '매매' }
+      when 'jeonse'
+        filtered = filtered.select { |p| p[:transaction_type] == '전세' }
+      when 'monthly'
+        filtered = filtered.select { |p| p[:transaction_type] == '월세' }
+      end
+    end
+    
+    # Property types filter
+    if @filter_params[:property_types].present?
+      type_mapping = {
+        'apartment' => '아파트',
+        'officetel' => '오피스텔',
+        'villa' => '빌라',
+        'house' => '단독주택',
+        'commercial_house' => '상가주택',
+        'multi_house' => '다가구주택'
+      }
+      
+      allowed_types = @filter_params[:property_types].map { |t| type_mapping[t] }.compact
+      filtered = filtered.select { |p| allowed_types.include?(p[:type]) } if allowed_types.any?
+    end
+    
+    # Price range filters
+    filtered = apply_price_range_filter(filtered)
+    
+    # Area filters
+    filtered = apply_area_range_filter(filtered)
+    
+    # Room count filters
+    if @filter_params[:room_count].present?
+      min_rooms = range_param(:room_count, :min, 0)
+      max_rooms = range_param(:room_count, :max, 999)
+      # Since sample data doesn't have room_count, we'll skip this for now
+    end
+    
+    # Built year filter
+    if @filter_params[:built_year].present?
+      min_year = range_param(:built_year, :min, 1990)
+      max_year = range_param(:built_year, :max, 2024)
+      filtered = filtered.select do |p|
+        p[:year_built] >= min_year && p[:year_built] <= max_year
+      end
+    end
+    
+    # Features filters
+    if @filter_params[:has_elevator].present?
+      filtered = filtered.select { |p| p[:has_elevator] }
+    end
+    
+    # Direction filter
+    if @filter_params[:direction].present? && @filter_params[:direction].any?
+      filtered = filtered.select do |p|
+        @filter_params[:direction].any? { |dir| p[:direction]&.include?(dir) }
+      end
+    end
+    
+    # Sort properties
+    sort_properties(filtered)
+  end
+  
+  def apply_price_range_filter(properties)
+    return properties unless @filter_params[:sale_price] || @filter_params[:jeonse_deposit] || @filter_params[:monthly_rent]
+    
+    properties.select do |property|
+      case property[:transaction_type]
+      when '매매'
+        if @filter_params[:sale_price].present?
+          min_price = range_param(:sale_price, :min, 0) * 10000
+          max_price = range_param(:sale_price, :max, Float::INFINITY) * 10000
+          property[:price] && property[:price] >= min_price && property[:price] <= max_price
+        else
+          true
+        end
+      when '전세'
+        if @filter_params[:jeonse_deposit].present?
+          min_deposit = range_param(:jeonse_deposit, :min, 0) * 10000
+          max_deposit = range_param(:jeonse_deposit, :max, Float::INFINITY) * 10000
+          property[:deposit] && property[:deposit] >= min_deposit && property[:deposit] <= max_deposit
+        else
+          true
+        end
+      when '월세'
+        if @filter_params[:monthly_rent].present?
+          min_rent = range_param(:monthly_rent, :min, 0) * 10000
+          max_rent = range_param(:monthly_rent, :max, Float::INFINITY) * 10000
+          property[:monthly_rent] && property[:monthly_rent] >= min_rent && property[:monthly_rent] <= max_rent
+        else
+          true
+        end
+      else
+        true
+      end
+    end
+  end
+  
+  def apply_area_range_filter(properties)
+    return properties unless @filter_params[:exclusive_area] || @filter_params[:supply_area]
+    
+    properties.select do |property|
+      exclusive_ok = true
+      supply_ok = true
+      
+      if @filter_params[:exclusive_area].present?
+        min_area = range_param(:exclusive_area, :min, 0)
+        max_area = range_param(:exclusive_area, :max, Float::INFINITY)
+        
+        # Convert to pyeong if needed
+        area_value = property.dig(:area, :exclusive) || 0
+        if @filter_params[:area_unit] == 'pyeong'
+          area_value = (area_value / 3.3058).round(1)
+        end
+        
+        exclusive_ok = area_value >= min_area && area_value <= max_area
+      end
+      
+      if @filter_params[:supply_area].present?
+        min_area = range_param(:supply_area, :min, 0)
+        max_area = range_param(:supply_area, :max, Float::INFINITY)
+        
+        # Convert to pyeong if needed
+        area_value = property.dig(:area, :supply) || 0
+        if @filter_params[:area_unit] == 'pyeong'
+          area_value = (area_value / 3.3058).round(1)
+        end
+        
+        supply_ok = area_value >= min_area && area_value <= max_area
+      end
+      
+      exclusive_ok && supply_ok
+    end
+  end
+  
+  def sort_properties(properties)
+    case @current_sort
+    when 'price_low'
+      properties.sort_by { |p| get_property_price(p) }
+    when 'price_high'
+      properties.sort_by { |p| get_property_price(p) }.reverse
+    when 'area_large'
+      properties.sort_by { |p| p.dig(:area, :exclusive) || 0 }.reverse
+    when 'area_small'
+      properties.sort_by { |p| p.dig(:area, :exclusive) || 0 }
+    when 'latest'
+    else
+      properties.reverse
+    end
+  end
+  
+  def get_property_price(property)
+    case property[:transaction_type]
+    when '매매'
+      property[:price] || 0
+    when '전세'
+      property[:deposit] || 0
+    when '월세'
+      (property[:deposit] || 0) + (property[:monthly_rent] || 0) * 100 # 월세는 100배하여 정렬에 영향주기
+    else
+      0
+    end
+  end
+  
   # Helper method to safely extract range values from params
   def range_param(param_name, key, default_value)
-    param = params[param_name]
+    param = @filter_params[param_name] || params[param_name]
     if param.is_a?(Hash) && param[key].present?
       param[key].to_f
     else
