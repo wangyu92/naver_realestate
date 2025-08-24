@@ -1,0 +1,126 @@
+<%
+  # Direction picker component for selecting property orientation (8 directions)
+  label ||= "방향"
+  name ||= "direction"
+  selected ||= []
+  style ||= "compass" # compass or list
+  multiple ||= true
+  id ||= "direction_picker_#{name}"
+  
+  directions = [
+    { value: 'north', label: '북', short: 'N', position: 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-full' },
+    { value: 'northeast', label: '북동', short: 'NE', position: 'top-0 right-0' },
+    { value: 'east', label: '동', short: 'E', position: 'top-1/2 right-0 transform translate-x-0 -translate-y-1/2' },
+    { value: 'southeast', label: '남동', short: 'SE', position: 'bottom-0 right-0' },
+    { value: 'south', label: '남', short: 'S', position: 'bottom-0 left-1/2 transform -translate-x-1/2 translate-y-0' },
+    { value: 'southwest', label: '남서', short: 'SW', position: 'bottom-0 left-0' },
+    { value: 'west', label: '서', short: 'W', position: 'top-1/2 left-0 transform -translate-x-0 -translate-y-1/2' },
+    { value: 'northwest', label: '북서', short: 'NW', position: 'top-0 left-0' }
+  ]
+%>
+
+<div class="direction-picker mb-6" data-controller="direction-picker"
+     data-direction-picker-multiple-value="<%= multiple %>">
+  
+  <% if label.present? %>
+    <label class="block text-sm font-medium text-gray-700 mb-4">
+      <%= label %>
+    </label>
+  <% end %>
+
+  <% if style == "compass" %>
+    <!-- Compass style -->
+    <div class="relative w-48 h-48 mx-auto mb-4">
+      <!-- Center circle -->
+      <div class="absolute top-1/2 left-1/2 w-12 h-12 bg-gray-100 border-2 border-gray-300 rounded-full transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
+        <span class="text-xs text-gray-500 font-medium">방향</span>
+      </div>
+      
+      <!-- Direction buttons -->
+      <% directions.each do |direction| %>
+        <%
+          is_selected = selected.include?(direction[:value])
+          input_type = multiple ? "checkbox" : "radio"
+          input_name = multiple ? "#{name}[]" : name
+        %>
+        
+        <div class="absolute <%= direction[:position] %> -m-4">
+          <input type="<%= input_type %>" 
+                 id="<%= id %>_<%= direction[:value] %>"
+                 name="<%= input_name %>" 
+                 value="<%= direction[:value] %>"
+                 class="sr-only"
+                 data-direction-picker-target="input"
+                 data-action="change->direction-picker#updateSelection"
+                 <%= 'checked' if is_selected %>>
+          
+          <label for="<%= id %>_<%= direction[:value] %>" 
+                 class="flex items-center justify-center w-8 h-8 rounded-full border-2 cursor-pointer transition-all duration-200 hover:scale-110 <%= is_selected ? 'bg-blue-500 border-blue-500 text-white shadow-lg' : 'bg-white border-gray-300 text-gray-600 hover:border-blue-400' %>">
+            <span class="text-xs font-bold"><%= direction[:short] %></span>
+          </label>
+        </div>
+      <% end %>
+      
+      <!-- Compass lines -->
+      <div class="absolute top-1/2 left-1/2 w-px h-48 bg-gray-200 transform -translate-x-1/2 -translate-y-1/2"></div>
+      <div class="absolute top-1/2 left-1/2 w-48 h-px bg-gray-200 transform -translate-x-1/2 -translate-y-1/2"></div>
+      <div class="absolute top-1/2 left-1/2 w-px h-48 bg-gray-200 transform -translate-x-1/2 -translate-y-1/2 rotate-45"></div>
+      <div class="absolute top-1/2 left-1/2 w-px h-48 bg-gray-200 transform -translate-x-1/2 -translate-y-1/2 -rotate-45"></div>
+    </div>
+    
+  <% else %>
+    <!-- List style -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <% directions.each do |direction| %>
+        <%
+          is_selected = selected.include?(direction[:value])
+          input_type = multiple ? "checkbox" : "radio"
+          input_name = multiple ? "#{name}[]" : name
+        %>
+        
+        <label class="relative flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition-colors duration-200 <%= is_selected ? 'border-blue-500 bg-blue-50' : 'border-gray-200' %>">
+          
+          <input type="<%= input_type %>" 
+                 name="<%= input_name %>" 
+                 value="<%= direction[:value] %>"
+                 class="sr-only"
+                 data-direction-picker-target="input"
+                 data-action="change->direction-picker#updateSelection"
+                 <%= 'checked' if is_selected %>>
+          
+          <!-- Custom checkbox/radio indicator -->
+          <div class="flex items-center justify-center w-5 h-5 rounded<%= multiple ? '' : '-full' %> border-2 transition-all duration-200 <%= is_selected ? 'bg-blue-500 border-blue-500' : 'border-gray-300' %>">
+            <% if is_selected %>
+              <% if multiple %>
+                <!-- Checkmark for checkbox -->
+                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>
+              <% else %>
+                <!-- Dot for radio -->
+                <div class="w-2 h-2 bg-white rounded-full"></div>
+              <% end %>
+            <% end %>
+          </div>
+          
+          <span class="ml-3 text-sm font-medium text-gray-900">
+            <%= direction[:label] %> (<%= direction[:short] %>)
+          </span>
+        </label>
+      <% end %>
+    </div>
+  <% end %>
+  
+  <!-- Selected directions display -->
+  <div class="mt-4">
+    <div class="text-sm text-gray-600" data-direction-picker-target="selectedDisplay">
+      <% if selected.any? %>
+        <span class="font-medium">선택됨:</span>
+        <% selected_directions = directions.select { |d| selected.include?(d[:value]) } %>
+        <%= selected_directions.map { |d| d[:label] }.join(', ') %>
+      <% else %>
+        <span class="text-gray-400">선택된 방향이 없습니다</span>
+      <% end %>
+    </div>
+  </div>
+</div>

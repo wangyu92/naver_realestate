@@ -1,0 +1,57 @@
+<%
+  # Toggle component for boolean filters (elevator, photos, etc.)
+  label ||= ""
+  name ||= ""
+  checked ||= false
+  id ||= "toggle_#{name.gsub(/[\[\]]/, '_')}"
+  size ||= "base" # sm, base, lg
+  color ||= "blue" # blue, green, red, yellow
+%>
+
+<div class="toggle-container mb-4">
+  <div class="flex items-center justify-between">
+    <% if label.present? %>
+      <label for="<%= id %>" class="text-sm font-medium text-gray-700 cursor-pointer">
+        <%= label %>
+      </label>
+    <% end %>
+    
+    <div class="relative" data-controller="toggle">
+      <input type="checkbox" 
+             id="<%= id %>"
+             name="<%= name %>" 
+             value="1"
+             class="sr-only"
+             data-toggle-target="checkbox"
+             data-action="change->toggle#toggle"
+             <%= 'checked' if checked %>>
+      
+      <!-- Toggle switch -->
+      <div class="toggle-switch <%= size == 'sm' ? 'w-8 h-5' : size == 'lg' ? 'w-12 h-7' : 'w-10 h-6' %> bg-gray-200 rounded-full cursor-pointer transition-colors duration-200 <%= checked ? "bg-#{color}-500" : '' %>"
+           data-toggle-target="switch"
+           data-action="click->toggle#toggle">
+        
+        <!-- Toggle handle -->
+        <div class="toggle-handle <%= size == 'sm' ? 'w-3 h-3 top-1 left-1' : size == 'lg' ? 'w-5 h-5 top-1 left-1' : 'w-4 h-4 top-1 left-1' %> bg-white rounded-full shadow-md transform transition-transform duration-200 absolute <%= checked ? (size == 'sm' ? 'translate-x-3' : size == 'lg' ? 'translate-x-5' : 'translate-x-4') : 'translate-x-0' %>"
+             data-toggle-target="handle">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Toggle switch colors */
+  .toggle-switch.bg-blue-500 { background-color: #3B82F6; }
+  .toggle-switch.bg-green-500 { background-color: #10B981; }
+  .toggle-switch.bg-red-500 { background-color: #EF4444; }
+  .toggle-switch.bg-yellow-500 { background-color: #F59E0B; }
+  
+  /* Focus styles */
+  .toggle-switch:focus-within {
+    ring: 2px;
+    ring-color: currentColor;
+    ring-opacity: 0.3;
+    ring-offset: 2px;
+  }
+</style>

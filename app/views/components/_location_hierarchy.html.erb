@@ -1,0 +1,268 @@
+<%
+  # Korean location hierarchy selector (province → city → district → dong)
+  label ||= "지역 선택"
+  name ||= "locations"
+  selected ||= []
+  multiple ||= true
+  search ||= true
+  modal ||= false
+  id ||= "location_hierarchy_#{name}"
+  
+  # Sample Korean location data structure
+  locations ||= [
+    {
+      region: "서울특별시",
+      districts: [
+        {
+          name: "강남구",
+          dongs: ["역삼동", "삼성동", "논현동", "압구정동", "신사동", "청담동", "대치동", "개포동", "도곡동", "수서동", "일원동", "세곡동"]
+        },
+        {
+          name: "서초구", 
+          dongs: ["서초동", "잠원동", "반포동", "방배동", "양재동", "내곡동"]
+        },
+        {
+          name: "송파구",
+          dongs: ["잠실동", "신천동", "풍납동", "송파동", "석촌동", "삼전동", "가락동", "문정동", "장지동", "방이동", "오금동", "거여동", "마천동"]
+        },
+        {
+          name: "강동구",
+          dongs: ["명일동", "고덕동", "상일동", "강일동", "둔촌동", "암사동", "성내동", "천호동", "길동"]
+        }
+      ]
+    },
+    {
+      region: "경기도",
+      districts: [
+        {
+          name: "안산시 상록구",
+          dongs: ["사동", "본오동", "부곡동", "월피동", "성포동", "팔곡동", "홍곡동", "차곡동", "화정동", "하상동"]
+        },
+        {
+          name: "안산시 단원구", 
+          dongs: ["고잔동", "와동", "원곡동", "신길동", "선부동"]
+        },
+        {
+          name: "수원시 영통구",
+          dongs: ["영통동", "원천동", "하동", "광교동", "이의동", "매탄동"]
+        }
+      ]
+    },
+    {
+      region: "경상북도",
+      districts: [
+        {
+          name: "상주시",
+          dongs: ["낙동면", "청리면", "모서면", "화동면", "화서면", "은척면", "외남면", "함창읍", "이안면", "화북면"]
+        }
+      ]
+    }
+  ]
+%>
+
+<div class="location-selector <%= modal ? 'location-modal' : '' %>" data-controller="location-hierarchy"
+     data-location-hierarchy-multiple-value="<%= multiple %>">
+  
+  <% if label.present? %>
+    <div class="flex items-center justify-between mb-4">
+      <label class="block text-sm font-medium text-gray-700">
+        <%= label %>
+      </label>
+      
+      <% if multiple %>
+        <button type="button" 
+                class="text-xs text-red-600 hover:text-red-800 font-medium"
+                data-action="click->location-hierarchy#clearAll"
+                data-location-hierarchy-target="clearButton">
+          전체 해제
+        </button>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if search %>
+    <!-- Search header -->
+    <div class="mb-4">
+      <div class="relative">
+        <input type="text" 
+               placeholder="지역명으로 검색 (예: 강남구, 역삼동)" 
+               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+               data-location-hierarchy-target="searchInput"
+               data-action="input->location-hierarchy#search keydown->location-hierarchy#handleKeydown">
+        
+        <!-- Search icon -->
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Hierarchical location list -->  
+  <div class="hierarchy-list max-h-96 overflow-y-auto border border-gray-200 rounded-lg bg-white" 
+       data-location-hierarchy-target="list">
+    <% locations.each_with_index do |region, region_index| %>
+      <div class="region-item border-b border-gray-100 last:border-b-0" 
+           data-region="<%= region[:region] %>">
+        
+        <!-- Region header -->
+        <div class="region-header sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
+          <label class="flex items-center p-3 cursor-pointer hover:bg-gray-100 transition-colors">
+            <input type="checkbox" 
+                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                   data-action="change->location-hierarchy#toggleRegion"
+                   data-region-name="<%= region[:region] %>">
+            
+            <span class="ml-3 font-medium text-gray-900 flex-1">
+              <%= region[:region] %>
+              <span class="text-xs text-gray-500 ml-2">
+                (<%= region[:districts].sum { |d| d[:dongs].length } %>개 지역)
+              </span>
+            </span>
+            
+            <button type="button" 
+                    class="expand-toggle p-1 rounded-full hover:bg-gray-200 transition-colors"
+                    data-action="click->location-hierarchy#toggleExpand"
+                    data-location-hierarchy-target="expandButton">
+              <svg class="w-4 h-4 text-gray-500 transform transition-transform" data-expanded="false">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" fill="none" stroke="currentColor"></path>
+              </svg>
+            </button>
+          </label>
+        </div>
+        
+        <!-- Districts list (initially hidden) -->
+        <div class="districts-list hidden" data-location-hierarchy-target="districtsList">
+          <% region[:districts].each do |district| %>
+            <div class="district-item ml-4">
+              
+              <!-- District header -->
+              <label class="flex items-center p-3 border-l-2 border-blue-200 cursor-pointer hover:bg-blue-50 transition-colors">
+                <input type="checkbox" 
+                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                       data-action="change->location-hierarchy#toggleDistrict"
+                       data-district-name="<%= district[:name] %>"
+                       data-region-name="<%= region[:region] %>">
+                
+                <span class="ml-3 font-medium text-gray-800 flex-1">
+                  <%= district[:name] %>
+                  <span class="text-xs text-gray-500 ml-2">
+                    (<%= district[:dongs].length %>개 동)
+                  </span>
+                </span>
+                
+                <button type="button" 
+                        class="expand-toggle p-1 rounded-full hover:bg-blue-200 transition-colors"
+                        data-action="click->location-hierarchy#toggleDistrictExpand">
+                  <svg class="w-3 h-3 text-gray-500 transform transition-transform" data-expanded="false">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" fill="none" stroke="currentColor"></path>
+                  </svg>
+                </button>
+              </label>
+              
+              <!-- Dongs list (initially hidden) -->
+              <div class="dongs-list hidden ml-4" data-location-hierarchy-target="dongsList">
+                <div class="max-h-48 overflow-y-auto">
+                  <% district[:dongs].each do |dong| %>
+                    <label class="flex items-center p-2 border-l-2 border-green-200 cursor-pointer hover:bg-green-50 transition-colors">
+                      <input type="<%= multiple ? 'checkbox' : 'radio' %>" 
+                             name="<%= multiple ? "#{name}[]" : name %>" 
+                             value="<%= "#{region[:region]} #{district[:name]} #{dong}" %>"
+                             class="rounded<%= multiple ? '' : '-full' %> border-gray-300 text-green-600 focus:ring-green-500"
+                             data-action="change->location-hierarchy#selectLocation"
+                             data-dong-name="<%= dong %>"
+                             data-district-name="<%= district[:name] %>"
+                             data-region-name="<%= region[:region] %>">
+                      
+                      <span class="ml-3 text-sm text-gray-700">
+                        <%= dong %>
+                      </span>
+                    </label>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- Selected locations display -->
+  <div class="selected-locations mt-4" data-location-hierarchy-target="selectedList">
+    <div class="text-sm text-gray-600 mb-2">
+      선택된 지역: <span data-location-hierarchy-target="selectedCount">0</span>개
+    </div>
+    
+    <div class="flex flex-wrap gap-2" data-location-hierarchy-target="selectedTags">
+      <!-- Selected location tags will appear here -->
+    </div>
+  </div>
+  
+  <% if modal %>
+    <!-- Modal action buttons -->
+    <div class="action-buttons mt-6 flex justify-end gap-3">
+      <button type="button" 
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              data-action="click->location-hierarchy#cancel">
+        취소
+      </button>
+      
+      <button type="button" 
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              data-action="click->location-hierarchy#confirm">
+        선택 완료
+      </button>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  /* Custom scrollbar for hierarchy list */
+  .hierarchy-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .hierarchy-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  .hierarchy-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  
+  .hierarchy-list::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+  }
+  
+  /* Selected location tags */
+  .location-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    background-color: #dbeafe;
+    color: #1e40af;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid #93c5fd;
+  }
+  
+  .location-tag .remove-btn {
+    margin-left: 4px;
+    padding: 2px;
+    border-radius: 50%;
+    background-color: #1e40af;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .location-tag .remove-btn:hover {
+    background-color: #1e3a8a;
+  }
+</style>

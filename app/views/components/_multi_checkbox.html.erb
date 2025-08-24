@@ -1,0 +1,97 @@
+<%
+  # Multi-checkbox component for selecting multiple property types
+  label ||= ""
+  name ||= ""
+  options ||= []
+  selected ||= []
+  columns ||= 3
+  select_all ||= true
+  id ||= "multi_checkbox_#{name.gsub(/[\[\]]/, '_')}"
+%>
+
+<div class="multi-checkbox-container mb-6" data-controller="multi-checkbox"
+     data-multi-checkbox-name-value="<%= name %>">
+  
+  <% if label.present? %>
+    <div class="flex items-center justify-between mb-4">
+      <label class="block text-sm font-medium text-gray-700">
+        <%= label %>
+      </label>
+      
+      <% if select_all %>
+        <button type="button" 
+                class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                data-action="click->multi-checkbox#toggleAll"
+                data-multi-checkbox-target="selectAllButton">
+          전체 선택
+        </button>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-<%= columns %> gap-3 sm:gap-4">
+    <% options.each_with_index do |option, index| %>
+      <% 
+        option_value = option.is_a?(Hash) ? option[:value] : option
+        option_label = option.is_a?(Hash) ? option[:label] : option
+        option_count = option.is_a?(Hash) ? option[:count] : nil
+        is_selected = selected.include?(option_value.to_s)
+        checkbox_id = "#{id}_#{index}"
+      %>
+      
+      <label for="<%= checkbox_id %>" 
+             class="relative flex items-center p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition-colors duration-200 <%= is_selected ? 'border-blue-500 bg-blue-50' : 'border-gray-200' %>">
+        
+        <input type="checkbox" 
+               id="<%= checkbox_id %>"
+               name="<%= name %>[]" 
+               value="<%= option_value %>"
+               class="sr-only"
+               data-multi-checkbox-target="checkbox"
+               data-action="change->multi-checkbox#updateSelection"
+               <%= 'checked' if is_selected %>>
+        
+        <!-- Custom checkbox indicator -->
+        <div class="flex items-center justify-center w-5 h-5 rounded border-2 transition-all duration-200 <%= is_selected ? 'bg-blue-500 border-blue-500' : 'border-gray-300' %>">
+          <% if is_selected %>
+            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>
+          <% end %>
+        </div>
+        
+        <!-- Label and count -->
+        <div class="ml-3 flex-1 min-w-0">
+          <span class="text-sm font-medium text-gray-900 block truncate">
+            <%= option_label %>
+          </span>
+          <% if option_count %>
+            <span class="text-xs text-gray-500 mt-1 block">
+              <%= number_with_delimiter(option_count) %>건
+            </span>
+          <% end %>
+        </div>
+      </label>
+    <% end %>
+  </div>
+  
+  <!-- Selected count display -->
+  <div class="mt-4 text-sm text-gray-600" data-multi-checkbox-target="selectedCount">
+    <span data-multi-checkbox-target="countText">0</span>개 선택됨
+  </div>
+</div>
+
+<style>
+  /* Responsive grid columns */
+  @media (max-width: 640px) {
+    .grid-cols-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .grid-cols-3 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -23,8 +23,10 @@
         <a href="#navigation" class="text-blue-600 hover:text-blue-800">Navigation</a>
         <a href="#modals" class="text-blue-600 hover:text-blue-800">Modals</a>
         <a href="#alerts" class="text-blue-600 hover:text-blue-800">Alerts</a>
-        <a href="#filters" class="text-blue-600 hover:text-blue-800">Filters</a>
+        <a href="#filters" class="text-blue-600 hover:text-blue-800">Advanced Filters</a>
         <a href="#gallery" class="text-blue-600 hover:text-blue-800">Gallery</a>
+        <a href="#badges" class="text-blue-600 hover:text-blue-800">Badges</a>
+        <a href="#prices" class="text-blue-600 hover:text-blue-800">Prices</a>
       </nav>
     </div>
 
@@ -216,8 +218,151 @@
 
     <!-- Filters Section -->
     <section id="filters" class="mb-16">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Filter Sidebar</h2>
-      <div class="bg-gray-100 p-6 rounded-lg">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Advanced Filter Components</h2>
+      
+      <!-- Range Sliders -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Range Sliders</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <%= render 'components/range_slider',
+                label: '매매가',
+                name: 'sale_price',
+                min: 0,
+                max: 1000000000,
+                step: 1000000,
+                value_min: 100000000,
+                value_max: 500000000,
+                format: 'currency',
+                show_inputs: true %>
+          </div>
+          
+          <div>
+            <%= render 'components/range_slider',
+                label: '전용면적',
+                name: 'exclusive_area',
+                min: 0,
+                max: 500,
+                step: 1,
+                value_min: 60,
+                value_max: 120,
+                format: 'area',
+                show_inputs: true %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unit Toggle -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Unit Toggle</h3>
+        <%= render 'components/unit_toggle',
+            current_unit: 'pyeong',
+            name: 'area_unit',
+            labels: { pyeong: '평', sqm: '㎡' } %>
+      </div>
+
+      <!-- Multi Checkbox -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Multi Checkbox Selection</h3>
+        <%= render 'components/multi_checkbox',
+            label: '매물유형',
+            name: 'property_types',
+            options: [
+              { label: '아파트', value: 'apartment', count: 1234 },
+              { label: '오피스텔', value: 'officetel', count: 567 },
+              { label: '빌라/연립', value: 'villa', count: 890 },
+              { label: '단독주택', value: 'house', count: 234 },
+              { label: '상가주택', value: 'commercial_house', count: 123 },
+              { label: '다가구주택', value: 'multi_house', count: 345 }
+            ],
+            columns: 2,
+            select_all: true %>
+      </div>
+
+      <!-- Direction Picker -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Direction Picker</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="text-md font-medium mb-4">Compass Style</h4>
+            <%= render 'components/direction_picker',
+                label: '방향 (나침반)',
+                name: 'direction_compass',
+                selected: ['south', 'southeast'],
+                style: 'compass',
+                multiple: true %>
+          </div>
+          
+          <div>
+            <h4 class="text-md font-medium mb-4">List Style</h4>
+            <%= render 'components/direction_picker',
+                label: '방향 (리스트)',
+                name: 'direction_list',
+                selected: ['north'],
+                style: 'list',
+                multiple: false %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floor Selector -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Floor Selector</h3>
+        <%= render 'components/floor_selector',
+            label: '층수',
+            name: 'floor',
+            placeholder: '예: 5/15, 10-12/20',
+            multiple: true,
+            value: '5/15' %>
+      </div>
+
+      <!-- Toggle Components -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Toggle Switches</h3>
+        <div class="space-y-4">
+          <%= render 'components/toggle',
+              label: '엘리베이터 유무',
+              name: 'has_elevator',
+              checked: true %>
+          
+          <%= render 'components/toggle',
+              label: '사진 있는 매물만',
+              name: 'has_photos',
+              color: 'green' %>
+          
+          <%= render 'components/toggle',
+              label: '신축 매물',
+              name: 'is_new',
+              color: 'red',
+              size: 'sm' %>
+        </div>
+      </div>
+
+      <!-- Location Hierarchy -->
+      <div class="mb-8 bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-6">Korean Location Hierarchy</h3>
+        <div class="max-w-2xl">
+          <%= render 'components/location_hierarchy',
+              label: '지역 선택 (시/도 → 구/군 → 동)',
+              name: 'locations',
+              selected: ['서울특별시 강남구 역삼동', '경기도 안산시 상록구 사동'],
+              multiple: true,
+              search: true,
+              modal: false %>
+        </div>
+        
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+          <p class="text-sm text-blue-800">
+            <strong>기능:</strong> 
+            계층적 지역 선택, 실시간 검색, 다중 선택, 전체/부분 선택 상태 관리, 
+            선택된 지역 태그 표시 및 개별 제거
+          </p>
+        </div>
+      </div>
+
+      <!-- Legacy Filter Sidebar -->
+      <div class="mb-8 bg-gray-100 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4">Legacy Filter Sidebar</h3>
         <div class="max-w-sm">
           <%= render 'components/filter_sidebar', filter_options: @filter_options %>
         </div>
