@@ -1,0 +1,112 @@
+<%
+  # Filter sidebar component for property search
+  # Parameters:
+  # - filter_options: hash with filter data
+  # - class: additional CSS classes
+  
+  filter_options ||= {}
+%>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 <%= local_assigns[:class] %>">
+  <h3 class="text-lg font-semibold text-gray-900 mb-6">필터</h3>
+  
+  <form data-controller="filter" data-action="submit->filter#apply" data-filter-target="form">
+    <!-- Property Type Filter -->
+    <div class="mb-6">
+      <h4 class="text-sm font-medium text-gray-900 mb-3">매물 유형</h4>
+      <div class="space-y-2">
+        <% (filter_options[:property_types] || ['아파트', '오피스텔', '빌라']).each do |type| %>
+          <label class="flex items-center">
+            <input type="checkbox" 
+                   name="property_type[]" 
+                   value="<%= type %>"
+                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700"><%= type %></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Price Range Filter -->
+    <div class="mb-6">
+      <h4 class="text-sm font-medium text-gray-900 mb-3">가격대</h4>
+      <div class="space-y-2">
+        <% (filter_options[:price_ranges] || [{label: "5억 이하", value: "0-500000000"}]).each do |range| %>
+          <label class="flex items-center">
+            <input type="radio" 
+                   name="price_range" 
+                   value="<%= range[:value] %>"
+                   class="text-blue-600 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700"><%= range[:label] %></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Location Filter -->
+    <div class="mb-6">
+      <%= render 'components/select_field',
+          label: '지역',
+          name: 'location',
+          placeholder: '지역 선택',
+          options: (filter_options[:locations] || ['강남구', '서초구']).map { |loc| {label: loc, value: loc} } %>
+    </div>
+    
+    <!-- Rooms Filter -->
+    <div class="mb-6">
+      <h4 class="text-sm font-medium text-gray-900 mb-3">방 개수</h4>
+      <div class="grid grid-cols-4 gap-2">
+        <% %w[1 2 3 4+].each do |rooms| %>
+          <label class="flex items-center justify-center p-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50 transition-colors">
+            <input type="checkbox" 
+                   name="rooms[]" 
+                   value="<%= rooms %>"
+                   class="sr-only"
+                   data-action="change->filter#toggleRoomSelection">
+            <span class="text-sm font-medium"><%= rooms %></span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Status Filter -->
+    <div class="mb-6">
+      <h4 class="text-sm font-medium text-gray-900 mb-3">거래 상태</h4>
+      <div class="space-y-2">
+        <% %w[available pending sold].each do |status| %>
+          <label class="flex items-center">
+            <input type="checkbox" 
+                   name="status[]" 
+                   value="<%= status %>"
+                   class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700">
+              <%= case status
+                  when 'available' then '판매중'
+                  when 'pending' then '협의중'
+                  when 'sold' then '판매완료'
+                  end %>
+            </span>
+          </label>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="flex space-x-3">
+      <%= render 'components/button',
+          text: '필터 적용',
+          variant: 'primary',
+          size: 'sm',
+          type: 'submit',
+          class: 'flex-1' %>
+      
+      <%= render 'components/button',
+          text: '초기화',
+          variant: 'outline',
+          size: 'sm',
+          type: 'button',
+          class: 'flex-1',
+          data: { action: 'click->filter#reset' } %>
+    </div>
+  </form>
+</div>

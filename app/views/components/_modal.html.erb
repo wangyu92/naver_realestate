@@ -1,0 +1,80 @@
+<%
+  # Modal/Dialog component
+  # Parameters:
+  # - title: modal title
+  # - size: sm, base, lg, xl
+  # - show_close_button: boolean (default: true)
+  # - class: additional CSS classes
+  # Usage: wrap content with this component
+  
+  title ||= nil
+  size ||= 'base'
+  show_close_button = local_assigns.key?(:show_close_button) ? show_close_button : true
+  
+  modal_id = local_assigns[:id] || "modal_#{SecureRandom.hex(4)}"
+  
+  # Size classes for modal content
+  size_classes = case size
+  when 'sm'
+    "max-w-md"
+  when 'lg'
+    "max-w-2xl"
+  when 'xl'
+    "max-w-4xl"
+  else # base
+    "max-w-lg"
+  end
+%>
+
+<!-- Modal Backdrop -->
+<div id="<%= modal_id %>" 
+     class="fixed inset-0 z-50 hidden overflow-y-auto"
+     data-controller="modal"
+     data-action="click->modal#closeOnBackdrop keydown@document->modal#closeOnEscape">
+  
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" data-modal-target="backdrop"></div>
+  
+  <!-- Modal Container -->
+  <div class="flex min-h-screen items-center justify-center p-4">
+    
+    <!-- Modal Content -->
+    <div class="relative bg-white rounded-lg shadow-xl <%= size_classes %> w-full transform transition-all"
+         data-modal-target="content">
+      
+      <!-- Modal Header -->
+      <% if title || show_close_button %>
+        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+          <% if title %>
+            <h3 class="text-lg font-semibold text-gray-900">
+              <%= title %>
+            </h3>
+          <% end %>
+          
+          <% if show_close_button %>
+            <button type="button" 
+                    class="text-gray-400 hover:text-gray-600 transition-colors"
+                    data-action="click->modal#close">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <!-- Modal Body -->
+      <div class="p-6 <%= local_assigns[:class] %>">
+        <%= yield if block_given? %>
+        <%= content if local_assigns[:content] %>
+      </div>
+      
+      <!-- Modal Footer (if provided) -->
+      <% if local_assigns[:footer] %>
+        <div class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
+          <%= footer %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

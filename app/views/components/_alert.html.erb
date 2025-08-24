@@ -1,0 +1,91 @@
+<%
+  # Alert/Notification component
+  # Parameters:
+  # - message: alert message text
+  # - type: success, warning, error, info
+  # - dismissible: boolean (default: false)
+  # - title: optional alert title
+  # - class: additional CSS classes
+  
+  message ||= '알림 메시지'
+  type ||= 'info'
+  dismissible ||= false
+  title ||= nil
+  
+  alert_id = "alert_#{SecureRandom.hex(4)}"
+  
+  # Type-based styling
+  type_classes = case type
+  when 'success'
+    "bg-green-50 border-green-200 text-green-800"
+  when 'warning'
+    "bg-yellow-50 border-yellow-200 text-yellow-800"
+  when 'error'
+    "bg-red-50 border-red-200 text-red-800"
+  else # info
+    "bg-blue-50 border-blue-200 text-blue-800"
+  end
+  
+  # Icon based on type
+  def icon_for_type(type)
+    case type
+    when 'success'
+      '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>'
+    when 'warning'
+      '<svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+      </svg>'
+    when 'error'
+      '<svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>'
+    else # info
+      '<svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>'
+    end
+  end
+  
+  base_classes = "border rounded-lg p-4"
+  all_classes = [base_classes, type_classes, local_assigns[:class]].compact.join(' ')
+%>
+
+<div id="<%= alert_id %>" 
+     class="<%= all_classes %>"
+     <% if dismissible %>data-controller="alert"<% end %>>
+  
+  <div class="flex items-start">
+    <!-- Icon -->
+    <div class="flex-shrink-0">
+      <%= icon_for_type(type).html_safe %>
+    </div>
+    
+    <!-- Content -->
+    <div class="ml-3 flex-1">
+      <% if title %>
+        <h3 class="text-sm font-medium mb-1">
+          <%= title %>
+        </h3>
+      <% end %>
+      
+      <div class="text-sm <%= title ? '' : 'font-medium' %>">
+        <%= message %>
+      </div>
+    </div>
+    
+    <!-- Dismiss Button -->
+    <% if dismissible %>
+      <div class="ml-auto pl-3">
+        <button type="button" 
+                class="inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1"
+                data-action="click->alert#dismiss">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>

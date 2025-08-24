@@ -1,0 +1,132 @@
+<%
+  # Property card component
+  # Parameters:
+  # - property: hash with property details
+  # - class: additional CSS classes
+  
+  property ||= {}
+  status = property[:status] || 'available'
+  featured = property[:featured] || false
+%>
+
+<div class="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-200 hover:shadow-xl hover:transform hover:scale-[1.02] <%= local_assigns[:class] %>">
+  <!-- Property Image -->
+  <div class="relative h-48 bg-gray-200">
+    <% if property[:image_url] %>
+      <img 
+        src="<%= property[:image_url] %>" 
+        alt="<%= property[:title] %>"
+        class="w-full h-full object-cover"
+        loading="lazy"
+      >
+    <% else %>
+      <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m0 0h4"></path>
+        </svg>
+      </div>
+    <% end %>
+    
+    <!-- Status Badge -->
+    <% if status %>
+      <%= render 'components/badge', 
+          text: case status
+                when 'available' then '판매중'
+                when 'pending' then '협의중'
+                when 'sold' then '판매완료'
+                else status
+                end,
+          variant: case status
+                   when 'available' then 'success'
+                   when 'pending' then 'warning'
+                   when 'sold' then 'danger'
+                   else 'primary'
+                   end,
+          class: "absolute top-3 left-3" %>
+    <% end %>
+    
+    <!-- Featured Badge -->
+    <% if featured %>
+      <%= render 'components/badge', 
+          text: '추천',
+          variant: 'featured',
+          class: "absolute top-3 right-3" %>
+    <% end %>
+  </div>
+  
+  <!-- Property Details -->
+  <div class="p-4">
+    <!-- Title and Price -->
+    <div class="mb-3">
+      <h3 class="text-lg font-semibold text-gray-900 mb-1">
+        <%= property[:title] || '매물 정보' %>
+      </h3>
+      <% if property[:price] %>
+        <div class="text-2xl font-bold text-blue-600">
+          <%= render 'components/price_display', price: property[:price] %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Property Type and Location -->
+    <div class="mb-3 text-sm text-gray-600">
+      <% if property[:type] %>
+        <span class="inline-block mr-2">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m0 0h4"></path>
+          </svg>
+          <%= property[:type] %>
+        </span>
+      <% end %>
+      
+      <% if property[:location] %>
+        <span class="inline-block">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <%= property[:location] %>
+        </span>
+      <% end %>
+    </div>
+    
+    <!-- Property Details -->
+    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+      <div class="flex items-center space-x-4">
+        <% if property[:rooms] %>
+          <span>방 <%= property[:rooms] %>개</span>
+        <% end %>
+        <% if property[:bathrooms] %>
+          <span>욕실 <%= property[:bathrooms] %>개</span>
+        <% end %>
+        <% if property[:area] %>
+          <span><%= property[:area] %>㎡</span>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Tags -->
+    <% if property[:tags] && property[:tags].any? %>
+      <div class="mb-4">
+        <div class="flex flex-wrap gap-2">
+          <% property[:tags].each do |tag| %>
+            <%= render 'components/badge', 
+                text: tag, 
+                variant: 'secondary', 
+                size: 'sm' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    
+    <!-- Action Button -->
+    <div class="pt-3 border-t border-gray-100">
+      <%= render 'components/button', 
+          text: '자세히 보기',
+          variant: 'primary',
+          size: 'sm',
+          class: 'w-full',
+          data: { property_id: property[:id] } %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<%
+  # Badge/Tag component for real estate app
+  # Parameters:
+  # - text: badge text
+  # - variant: primary, secondary, success, warning, danger, featured
+  # - size: sm, base
+  # - class: additional CSS classes
+  
+  text ||= 'Badge'
+  variant ||= 'primary'
+  size ||= 'base'
+  
+  base_classes = "inline-flex items-center font-medium rounded-full"
+  
+  # Size classes
+  size_classes = case size
+  when 'sm'
+    "px-2 py-0.5 text-xs"
+  else # base
+    "px-2.5 py-1 text-xs"
+  end
+  
+  # Variant classes
+  variant_classes = case variant
+  when 'primary'
+    "bg-blue-100 text-blue-800"
+  when 'secondary'
+    "bg-gray-100 text-gray-700"
+  when 'success'
+    "bg-green-100 text-green-800"
+  when 'warning'
+    "bg-yellow-100 text-yellow-800"
+  when 'danger'
+    "bg-red-100 text-red-800"
+  when 'featured'
+    "bg-purple-100 text-purple-800"
+  else
+    "bg-blue-100 text-blue-800"
+  end
+  
+  all_classes = [base_classes, size_classes, variant_classes, local_assigns[:class]].compact.join(' ')
+%>
+
+<span class="<%= all_classes %>">
+  <%= text %>
+</span>

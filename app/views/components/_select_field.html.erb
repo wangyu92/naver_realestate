@@ -1,0 +1,93 @@
+<%
+  # Select field component
+  # Parameters:
+  # - label: select label text
+  # - name: select name attribute
+  # - value: selected value
+  # - options: array of options [{label: "", value: ""}, ...]
+  # - placeholder: placeholder option text
+  # - required: boolean
+  # - disabled: boolean
+  # - size: sm, base, lg
+  # - error: error message
+  # - helper_text: helper text below select
+  # - class: additional CSS classes
+  
+  size ||= 'base'
+  required ||= false
+  disabled ||= false
+  options ||= []
+  error ||= nil
+  helper_text ||= nil
+  name ||= ''
+  value ||= ''
+  placeholder ||= ''
+  label ||= nil
+  
+  select_id = "select_#{SecureRandom.hex(4)}"
+  
+  # Size classes
+  size_classes = case size
+  when 'sm'
+    "px-3 py-1.5 text-sm"
+  when 'lg'
+    "px-4 py-3 text-lg"
+  else # base
+    "px-4 py-2 text-base"
+  end
+  
+  # Base select classes
+  base_classes = "block w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed bg-white"
+  
+  # Error classes
+  error_classes = error ? "border-red-500 focus:ring-red-500 focus:border-red-500" : ""
+  
+  all_select_classes = [base_classes, size_classes, error_classes, local_assigns[:class]].compact.join(' ')
+%>
+
+<div class="space-y-1">
+  <% if label %>
+    <label for="<%= select_id %>" class="block text-sm font-medium text-gray-700">
+      <%= label %>
+      <% if required %>
+        <span class="text-red-500">*</span>
+      <% end %>
+    </label>
+  <% end %>
+  
+  <select 
+    id="<%= select_id %>"
+    name="<%= name %>"
+    class="<%= all_select_classes %>"
+    <%= 'required' if required %>
+    <%= 'disabled' if disabled %>
+  >
+    <% if placeholder %>
+      <option value=""><%= placeholder %></option>
+    <% end %>
+    
+    <% options.each do |option| %>
+      <% if option.is_a?(Hash) %>
+        <option value="<%= option[:value] %>" <%= 'selected' if value == option[:value] %>>
+          <%= option[:label] %>
+        </option>
+      <% else %>
+        <option value="<%= option %>" <%= 'selected' if value == option %>>
+          <%= option %>
+        </option>
+      <% end %>
+    <% end %>
+  </select>
+  
+  <% if error %>
+    <p class="text-sm text-red-600">
+      <%= error %>
+    </p>
+  <% end %>
+  
+  <% if helper_text && !error %>
+    <p class="text-sm text-gray-500">
+      <%= helper_text %>
+    </p>
+  <% end %>
+</div>

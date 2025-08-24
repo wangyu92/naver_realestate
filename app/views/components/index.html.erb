@@ -1,0 +1,319 @@
+<%
+  content_for :title, "UI Components Showcase"
+%>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-900">UI Components Showcase</h1>
+        <p class="mt-4 text-lg text-gray-600">네이버 부동산 앱을 위한 재사용 가능한 UI 컴포넌트 라이브러리</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Navigation -->
+    <div class="mb-8">
+      <nav class="flex space-x-8">
+        <a href="#buttons" class="text-blue-600 hover:text-blue-800">Buttons</a>
+        <a href="#cards" class="text-blue-600 hover:text-blue-800">Property Cards</a>
+        <a href="#forms" class="text-blue-600 hover:text-blue-800">Form Elements</a>
+        <a href="#navigation" class="text-blue-600 hover:text-blue-800">Navigation</a>
+        <a href="#modals" class="text-blue-600 hover:text-blue-800">Modals</a>
+        <a href="#alerts" class="text-blue-600 hover:text-blue-800">Alerts</a>
+        <a href="#filters" class="text-blue-600 hover:text-blue-800">Filters</a>
+        <a href="#gallery" class="text-blue-600 hover:text-blue-800">Gallery</a>
+      </nav>
+    </div>
+
+    <!-- Buttons Section -->
+    <section id="buttons" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Buttons</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <h3 class="text-lg font-semibold mb-4">Button Variants</h3>
+        <div class="flex flex-wrap gap-4 mb-6">
+          <%= render 'components/button', text: 'Primary Button', variant: 'primary' %>
+          <%= render 'components/button', text: 'Secondary Button', variant: 'secondary' %>
+          <%= render 'components/button', text: 'Outline Button', variant: 'outline' %>
+          <%= render 'components/button', text: 'Success Button', variant: 'success' %>
+          <%= render 'components/button', text: 'Danger Button', variant: 'danger' %>
+        </div>
+        
+        <h3 class="text-lg font-semibold mb-4">Button Sizes</h3>
+        <div class="flex flex-wrap items-center gap-4 mb-6">
+          <%= render 'components/button', text: 'Small', size: 'sm' %>
+          <%= render 'components/button', text: 'Medium', size: 'base' %>
+          <%= render 'components/button', text: 'Large', size: 'lg' %>
+        </div>
+        
+        <h3 class="text-lg font-semibold mb-4">Disabled State</h3>
+        <div class="flex gap-4">
+          <%= render 'components/button', text: 'Disabled Button', disabled: true %>
+          <%= render 'components/button', text: 'Loading...', loading: true %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Property Cards Section -->
+    <section id="cards" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Property Cards</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @sample_properties.each do |property| %>
+            <%= render 'components/property_card', property: property %>
+          <% end %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Elements Section -->
+    <section id="forms" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Form Elements</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Input Fields</h3>
+            <%= render 'components/input_field',
+                label: '이름',
+                name: 'name',
+                placeholder: '이름을 입력하세요' %>
+            
+            <%= render 'components/input_field',
+                label: '이메일',
+                name: 'email',
+                type: 'email',
+                placeholder: 'example@email.com',
+                class: 'mt-4' %>
+            
+            <%= render 'components/input_field',
+                label: '전화번호',
+                name: 'phone',
+                type: 'tel',
+                placeholder: '010-1234-5678',
+                class: 'mt-4',
+                icon: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>' %>
+
+            <%= render 'components/input_field',
+                label: '에러가 있는 필드',
+                name: 'error_field',
+                placeholder: '잘못된 값',
+                error: '올바른 형식으로 입력해주세요',
+                class: 'mt-4' %>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Select Fields</h3>
+            <%= render 'components/select_field',
+                label: '지역 선택',
+                name: 'location',
+                placeholder: '지역을 선택하세요',
+                options: [
+                  { label: '강남구', value: 'gangnam' },
+                  { label: '서초구', value: 'seocho' },
+                  { label: '송파구', value: 'songpa' },
+                  { label: '강동구', value: 'gangdong' }
+                ] %>
+            
+            <%= render 'components/select_field',
+                label: '매물 유형',
+                name: 'property_type',
+                placeholder: '유형을 선택하세요',
+                options: [
+                  { label: '아파트', value: 'apartment' },
+                  { label: '오피스텔', value: 'officetel' },
+                  { label: '빌라', value: 'villa' }
+                ],
+                helper: '원하는 매물 유형을 선택해주세요',
+                class: 'mt-4' %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section id="navigation" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Navigation</h2>
+      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <%= render 'components/navbar' %>
+      </div>
+      <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-800">
+          <strong>참고:</strong> 모바일에서 햄버거 메뉴를 클릭하여 사이드 메뉴를 확인할 수 있습니다.
+        </p>
+      </div>
+    </section>
+
+    <!-- Modals Section -->
+    <section id="modals" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Modals</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <div class="flex flex-wrap gap-4 mb-4">
+          <%= render 'components/button', 
+              text: 'Small Modal', 
+              variant: 'primary',
+              data: { action: 'click->modal#open' },
+              data_target: '#modal-sm' %>
+          
+          <%= render 'components/button', 
+              text: 'Medium Modal', 
+              variant: 'secondary',
+              data: { action: 'click->modal#open' },
+              data_target: '#modal-base' %>
+          
+          <%= render 'components/button', 
+              text: 'Large Modal', 
+              variant: 'outline',
+              data: { action: 'click->modal#open' },
+              data_target: '#modal-lg' %>
+        </div>
+        
+        <!-- Sample Modals -->
+        <%= render 'components/modal',
+            id: 'modal-sm',
+            title: '작은 모달',
+            size: 'sm',
+            content: '이것은 작은 크기의 모달입니다. 간단한 확인이나 알림용으로 사용됩니다.' %>
+        
+        <%= render 'components/modal',
+            id: 'modal-base',
+            title: '기본 모달',
+            size: 'base',
+            content: '이것은 기본 크기의 모달입니다. 대부분의 경우에 사용되는 표준 크기입니다.' %>
+        
+        <%= render 'components/modal',
+            id: 'modal-lg',
+            title: '큰 모달',
+            size: 'lg',
+            content: '이것은 큰 크기의 모달입니다. 복잡한 폼이나 많은 내용을 담을 때 사용됩니다.' %>
+      </div>
+    </section>
+
+    <!-- Alerts Section -->
+    <section id="alerts" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Alerts</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm space-y-4">
+        <%= render 'components/alert',
+            type: 'success',
+            message: '매물이 성공적으로 등록되었습니다!' %>
+        
+        <%= render 'components/alert',
+            type: 'info',
+            message: '새로운 매물 알림을 받으려면 설정에서 알림을 켜주세요.',
+            title: '알림 설정' %>
+        
+        <%= render 'components/alert',
+            type: 'warning',
+            message: '매물 정보가 불완전합니다. 모든 필드를 작성해주세요.' %>
+        
+        <%= render 'components/alert',
+            type: 'error',
+            message: '매물 업로드에 실패했습니다. 다시 시도해주세요.',
+            dismissible: true %>
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section id="filters" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Filter Sidebar</h2>
+      <div class="bg-gray-100 p-6 rounded-lg">
+        <div class="max-w-sm">
+          <%= render 'components/filter_sidebar', filter_options: @filter_options %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Image Gallery</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <div class="max-w-2xl mx-auto">
+          <%= render 'components/image_gallery',
+              title: '매물 사진',
+              images: [
+                { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', alt: '거실' },
+                { url: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', alt: '주방' },
+                { url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', alt: '침실' },
+                { url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', alt: '화장실' },
+                { url: 'https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', alt: '발코니' },
+                { url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', alt: '외부 전경' }
+              ] %>
+        </div>
+        
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+          <p class="text-sm text-gray-600">
+            <strong>기능:</strong> 메인 이미지 클릭으로 풀스크린 보기, 화살표 키보드 내비게이션, 썸네일 클릭으로 이미지 선택
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section id="badges" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Badges</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <div class="flex flex-wrap gap-3">
+          <%= render 'components/badge', text: '신축', variant: 'success' %>
+          <%= render 'components/badge', text: '급매', variant: 'danger' %>
+          <%= render 'components/badge', text: '협의가능', variant: 'warning' %>
+          <%= render 'components/badge', text: '인기매물', variant: 'primary' %>
+          <%= render 'components/badge', text: '추천', variant: 'info' %>
+          <%= render 'components/badge', text: '기본', variant: 'gray' %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Price Display Section -->
+    <section id="prices" class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Price Display</h2>
+      <div class="bg-white rounded-lg p-6 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">매매가</h3>
+            <div class="space-y-3">
+              <%= render 'components/price_display', price: 850000000, type: '매매' %>
+              <%= render 'components/price_display', price: 1350000000, type: '매매' %>
+              <%= render 'components/price_display', price: 2100000000, type: '매매' %>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-semibold mb-4">전세/월세</h3>
+            <div class="space-y-3">
+              <%= render 'components/price_display', price: 50000000, type: '전세' %>
+              <%= render 'components/price_display', price: 150000, type: '월세', deposit: 10000000 %>
+              <%= render 'components/price_display', price: 80000, type: '월세', deposit: 5000000 %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- JavaScript for modal triggers -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal trigger functionality
+    document.querySelectorAll('[data-action*="click->modal#open"]').forEach(button => {
+      button.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        if (targetId) {
+          const modal = document.querySelector(targetId);
+          if (modal && modal.dataset.controller === 'modal') {
+            // Manually trigger the modal open
+            const controller = modal.querySelector('[data-modal-target="content"]')?.closest('[data-controller="modal"]');
+            if (controller) {
+              // Find the Stimulus controller instance and call open
+              setTimeout(() => {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+              }, 10);
+            }
+          }
+        }
+      });
+    });
+  });
+</script>

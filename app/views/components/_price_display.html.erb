@@ -1,0 +1,48 @@
+<%
+  # Price display component for Korean real estate
+  # Parameters:
+  # - price: price in Korean Won (숫자)
+  # - show_currency: boolean to show/hide currency symbol
+  # - size: sm, base, lg
+  # - class: additional CSS classes
+  
+  price ||= 0
+  show_currency = local_assigns.key?(:show_currency) ? show_currency : true
+  size ||= 'base'
+  
+  # Format price in Korean Won
+  def format_korean_price(price)
+    return "0" if price.nil? || price == 0
+    
+    eok = price / 100_000_000  # 억 (100 million)
+    man = (price % 100_000_000) / 10_000  # 만 (10 thousand)
+    
+    if eok > 0 && man > 0
+      "#{eok}억 #{man.to_i}만원"
+    elsif eok > 0
+      "#{eok}억원"
+    elsif man > 0
+      "#{man.to_i}만원"
+    else
+      "#{price.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse}원"
+    end
+  end
+  
+  # Size classes
+  size_classes = case size
+  when 'sm'
+    "text-sm"
+  when 'lg'
+    "text-xl"
+  else # base
+    "text-base"
+  end
+  
+  formatted_price = format_korean_price(price)
+  
+  all_classes = [size_classes, local_assigns[:class]].compact.join(' ')
+%>
+
+<span class="<%= all_classes %> font-semibold">
+  <%= formatted_price %>
+</span>
